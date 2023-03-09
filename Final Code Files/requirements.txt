@@ -1,0 +1,13 @@
+Cython==0.29.30
+matplotlib==3.5.2
+modAL==0.4.1
+numpy==1.23.1
+openpyxl==3.0.10
+pandas==1.4.3
+Pillow==9.2.0
+pymrmre==1.0.7
+scikit-learn==1.1.1
+scipy==1.8.1
+sklearn-rvm==0.1.1
+xgboost==1.6.1
+
