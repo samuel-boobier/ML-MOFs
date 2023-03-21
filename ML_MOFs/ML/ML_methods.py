@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.cross_decomposition import PLSRegression
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import QuantileTransformer, StandardScaler
 import smogn
@@ -145,3 +145,56 @@ def bin_data(TSN):
     print(pd.cut(TSN_data[TSN], bins=10).value_counts())
     binned_df = pd.cut(TSN_data[TSN], bins=10)
     print(binned_df)
+
+
+def regression(data, descriptors, target, method):
+    X = data[descriptors]
+    y = data[[target, "MOF"]]
+    # scale descriptors
+    X = StandardScaler().fit_transform(X)
+    X = pd.DataFrame(data=X, columns=descriptors)
+    # set up model
+    if method == "RF":
+        model = RandomForestRegressor(n_estimators=500)
+    else:
+        print("invalid model")
+        return
+    # number of folds
+    k = 10
+    # set up cross validation
+    kf = KFold(n_splits=k, random_state=None, shuffle=True)
+    # R2 list
+    r2 = []
+    # mean absolute error list
+    mae_loss = []
+    # prediction list
+    preds = []
+    # MOFS list
+    MOFS = []
+    # targets list
+    targets = []
+    # get for each fold
+    for train_index, test_index in kf.split(X):
+        X_train, X_test = X.iloc[train_index, :], X.iloc[test_index, :]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+        # get target values
+        MOFS.extend(y_test["MOF"].tolist())
+        # remove target values from y
+        y_train = y_train.drop(columns=["MOF"])
+        y_test = y_test.drop(columns=["MOF"])
+        model.fit(X_train, y_train.values.ravel())
+        y_pred = model.predict(X_test)
+        preds.extend(y_pred)
+        targets.extend(y_test[target].tolist())
+        valid_mae = mean_absolute_error(y_test, y_pred)
+        mae_loss.append(valid_mae)
+        r2.append(r2_score(y_pred, y_test))
+    # average mae
+    avg_mae_valid_loss = sum(mae_loss) / k
+    # average r2
+    avg_r2 = sum(r2) / k
+    metrics = [target, method, avg_r2, np.std(r2), avg_mae_valid_loss, np.std(mae_loss), np.std(y[target])]
+    predictions = pd.DataFrame(data=np.array([MOFS, targets, preds]).T,
+                               columns=["MOF", target, target + " Prediction"])
+    predictions = predictions.astype({target: 'float', target + ' Prediction': 'float'})
+    return predictions, metrics

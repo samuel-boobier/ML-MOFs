@@ -47,6 +47,6 @@ import numpy as np
 # # plot TSN predictions
 # get_graph(predictions_TSN, "TSN")
 # classification model
-preds = get_predictions("CO2 loading (mol/kg)", False)
-get_graph(preds, "CO2 loading (mol/kg)")
+preds = get_predictions("TSN Class", True)
+# get_graph(preds, "CO2 loading (mol/kg)")
 

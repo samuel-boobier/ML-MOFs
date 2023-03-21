@@ -47,6 +47,8 @@ for i in range(len(desc_chunks)):
 descriptor_corr = corr_graph(df_data[initial_descriptors + log10_descriptors], "Correlation Initial Descriptors",
                              "corr_plot")
 descriptor_corr.to_csv("../Results/Analysis_results/descriptor_correlation.csv")
+pd.set_option('display.precision', 4)
+print(descriptor_corr.to_latex(index=False))
 
 # descriptor plots
 plot("PV (cc/g) log10", "VF", df_data, "PV_VF")
