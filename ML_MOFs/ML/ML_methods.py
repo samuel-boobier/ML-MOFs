@@ -156,6 +156,10 @@ def regression(data, descriptors, target, method):
     # set up model
     if method == "RF":
         model = RandomForestRegressor(n_estimators=500)
+    elif method == "MLR":
+        model = LinearRegression()
+    elif method == "SVM":
+        model = SVR()
     else:
         print("invalid model")
         return

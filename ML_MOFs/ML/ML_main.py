@@ -13,7 +13,8 @@ intervals = {"CO2 loading (mol/kg)": 5,
              "SC CH4 loading (mol/kg)": 2,
              "TSN": 5,
              "LOG10 TSN": 0.5}
-ML_methods = ["RF"]
+# ML_methods = ["RF", "MLR", "SVM"]
+ML_methods = ["SVM"]
 for method in ML_methods:
     ML_metrics = []
     ML_preds = data[["MOF"]]
