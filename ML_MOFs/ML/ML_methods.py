@@ -1,182 +1,39 @@
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.cross_decomposition import PLSRegression
-from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.metrics import mean_absolute_error, r2_score, brier_score_loss, roc_curve
 from sklearn.model_selection import KFold
-from sklearn.preprocessing import QuantileTransformer, StandardScaler
-import smogn
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import classification_report, confusion_matrix, plot_roc_curve
-from imblearn.over_sampling import SMOTE
-from collections import Counter
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.svm import SVC, SVR
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
+import plotly
 
 
-def classification(X, y, TSN):
-    # implementing train-test-split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=66)
-    MOF_test = y_test["MOF"].tolist()
-    TSN_values = y_test["TSN"].tolist()
-    y_test = y_test[TSN].tolist()
-    y_train = y_train[TSN].tolist()
-    y = y[TSN].tolist()
-    # sm = SMOTE(random_state=27)
-    # X_train, y_train = sm.fit_resample(X_train, y_train)
-    # print(Counter(y))
-    # random forest model creation
-    rfc = KNeighborsClassifier()
-    rfc.fit(X_train, y_train)
-    # predictions
-    rfc_predict = rfc.predict(X_test)
-    rfc_cv_score = cross_val_score(rfc, X, y, cv=10, scoring='roc_auc')
-    print("=== Confusion Matrix ===")
-    print(confusion_matrix(y_test, rfc_predict))
-    print('\n')
-    print("=== Classification Report ===")
-    print(classification_report(y_test, rfc_predict))
-    print('\n')
-    print("=== All AUC Scores ===")
-    print(rfc_cv_score)
-    print('\n')
-    print("=== Mean AUC Score ===")
-    print("Mean AUC Score - Random Forest: ", rfc_cv_score.mean())
-    plot_roc_curve(rfc, X_test, y_test)
-    preds = pd.DataFrame(data=np.array([MOF_test, y_test, rfc_predict, TSN_values]).T,
-                         columns=["MOF", TSN, "Predictions", "TSN"])
-    return preds
-
-
-def get_predictions(TSN, classification_model=False):
-    # descriptors to include
-    descriptors = ["PLD (log10)", "LCD (log10)", "Density (g/cc)", "VSA (m2/cc)", "VF", "DC_CH4 (log10)",
-                   "DC_CO2 (log10)", "DC_H2S (log10)", "Qst_CH4", "Qst_CO2", "Qst_H2S", "Qst_H2O"]
-    # get target value data
-    TSN_data = pd.read_excel("../Datasets/ALLabsoluteloading_postMOSAEC.xlsx")
-    # drop any missing TSN values
-    TSN_data = TSN_data[["MOF", TSN, "TSN error", "TSN"]]
-    print("Initial dataset size: " + str(TSN_data.shape[0]))
-    TSN_data = TSN_data.dropna()
-    print("After dropping missing values: " + str(TSN_data.shape[0]))
-    # get dataframe with names and TSN
-    descriptor_data = pd.read_excel("../Datasets/dataframe_withdims.xlsx")
-    descriptor_data = descriptor_data[descriptor_data["MOF Name"].isin(TSN_data["MOF"])]
-    # drop all but 2D and 3D
-    descriptor_data = descriptor_data[descriptor_data["Maximum Dimensions"] > 1]
-    TSN_data = TSN_data[TSN_data["MOF"].isin(descriptor_data["MOF Name"])]
-    print("After dropping less than 2D: " + str(TSN_data.shape[0]))
-    # sort both descriptors and target by MOF name
-    descriptor_data = descriptor_data.sort_values(by="MOF Name")
-    TSN_data = TSN_data.sort_values(by="MOF")
-    # apply log scale to some descriptors
-    descriptor_data['PLD'] = np.log10(descriptor_data.PLD.values)
-    descriptor_data['LCD'] = np.log10(descriptor_data.LCD.values)
-    descriptor_data['DC_CH4'] = np.log10(descriptor_data["DC_CH4"].values)
-    descriptor_data['DC_CO2'] = np.log10(descriptor_data["DC_CO2"].values)
-    descriptor_data['DC_H2S'] = np.log10(descriptor_data["DC_H2S"].values)
-    descriptor_data = descriptor_data.rename(columns={'PLD': 'PLD (log10)'})
-    descriptor_data = descriptor_data.rename(columns={'LCD': 'LCD (log10)'})
-    descriptor_data = descriptor_data.rename(columns={'DC_CH4': 'DC_CH4 (log10)'})
-    descriptor_data = descriptor_data.rename(columns={'DC_CO2': 'DC_CO2 (log10)'})
-    descriptor_data = descriptor_data.rename(columns={'DC_H2S': 'DC_H2S (log10)'})
-    # get corresponding descriptors and target value
-    X = descriptor_data[descriptors]
-    y = TSN_data[[TSN, "MOF", "TSN"]]
-    # scale descriptors
-    X = StandardScaler().fit_transform(X)
-    X = pd.DataFrame(data=X, columns=descriptors)
-    # # reduce dataset with smogn
-    # X = X.reset_index(drop=True)
-    # y = y.reset_index(drop=True)
-    # all_data = pd.concat([y, X], axis="columns")
-    # data_smogn = smogn.smoter(data=all_data, y=TSN)
-    # print(data_smogn)
-    # print("After smogn dataset size: " + str(data_smogn.shape[0]))
-    # X = data_smogn[descriptors]
-    # y = data_smogn[TSN]
-    # classification model?
-    if classification_model:
-        preds = classification(X, y, TSN)
-        return preds
-    y = TSN_data[TSN]
-    # run 10-fold cross validation
-    # RF model
-    model = RandomForestRegressor(n_estimators=500)
-    # number of folds
-    k = 10
-    # set up cross validation
-    kf = KFold(n_splits=k, random_state=None, shuffle=False)
-    # mean absolute error list
-    mae_loss = []
-    # prediction list
-    preds = []
-    # get for each fold
-    for train_index, test_index in kf.split(X):
-        X_train, X_test = X.iloc[train_index, :], X.iloc[test_index, :]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
-        model.fit(X_train, y_train.values.ravel())
-        y_pred = model.predict(X_test)
-        preds.extend(y_pred)
-        valid_mae = mean_absolute_error(y_test, y_pred)
-        mae_loss.append(valid_mae)
-
-    avg_mae_valid_loss = sum(mae_loss) / k
-    print("MAE = " + str(avg_mae_valid_loss))
-    print("SD = " + str(np.std(y)))
-    predictions = pd.DataFrame(data=np.array([TSN_data["MOF"].tolist(), y.tolist(), preds]).T,
-                               columns=["MOF", TSN, "Prediction"])
-    predictions = predictions.astype({TSN: 'float', 'Prediction': 'float'})
-    if TSN == "LOG10 TSN":
-        predictions["Prediction"] = np.power(10, predictions["Prediction"].values)
-        predictions["TSN"] = np.power(10, predictions["LOG10 TSN"].values)
-    if TSN == "ROOT3 TSN":
-        predictions["Prediction"] = np.power(predictions["Prediction"].values, 3)
-        predictions["TSN"] = np.power(predictions["ROOT3 TSN"].values, 3)
-    return predictions
-
-
-def bin_data(TSN):
-    TSN_data = pd.read_excel("../Datasets/ALLabsoluteloading.xlsx")
-    TSN_data = TSN_data[["MOF", TSN, "TSN error"]]
-    TSN_data = TSN_data.dropna()
-    print(pd.cut(TSN_data[TSN], bins=10).value_counts())
-    binned_df = pd.cut(TSN_data[TSN], bins=10)
-    print(binned_df)
-
-
-def regression(data, descriptors, target, method):
+def prepare_data(data, descriptors, target):
     X = data[descriptors]
     y = data[[target, "MOF"]]
     # scale descriptors
     X = StandardScaler().fit_transform(X)
     X = pd.DataFrame(data=X, columns=descriptors)
-    # set up model
-    if method == "RF":
-        model = RandomForestRegressor(n_estimators=500)
-    elif method == "MLR":
-        model = LinearRegression()
-    elif method == "SVM":
-        model = SVR()
-    else:
-        print("invalid model")
-        return
+    return X, y
+
+
+def run_model(model, X, y, target, ML_type):
+    metric1 = []
+    metric2 = []
     # number of folds
     k = 10
     # set up cross validation
     kf = KFold(n_splits=k, random_state=None, shuffle=True)
-    # R2 list
-    r2 = []
-    # mean absolute error list
-    mae_loss = []
     # prediction list
     preds = []
     # MOFS list
     MOFS = []
     # targets list
     targets = []
+    briers = []
     # get for each fold
     for train_index, test_index in kf.split(X):
         X_train, X_test = X.iloc[train_index, :], X.iloc[test_index, :]
@@ -188,11 +45,64 @@ def regression(data, descriptors, target, method):
         y_test = y_test.drop(columns=["MOF"])
         model.fit(X_train, y_train.values.ravel())
         y_pred = model.predict(X_test)
+        if ML_type == "classification":
+            high_probs = model.predict_proba(X_test)[:, 0]
+            low_probs = model.predict_proba(X_test)[:, 1]
+            briers.append({
+                "HIGH": brier_score_loss(y_test, high_probs, pos_label="HIGH"),
+                "LOW": brier_score_loss(y_test, low_probs, pos_label="LOW")
+            })
+            y_score = model.predict_proba(X)[:, 1]
+            fpr, tpr, thresholds = roc_curve(y, y_score)
+
+            # The histogram of scores compared to true labels
+            fig_hist = px.histogram(
+                x=y_score, color=y, nbins=50,
+                labels=dict(color='True Labels', x='Score')
+            )
+
+            fig_hist.show()
+
+            # Evaluating model performance at various thresholds
+            df = pd.DataFrame({
+                'False Positive Rate': fpr,
+                'True Positive Rate': tpr
+            }, index=thresholds)
+            df.index.name = "Thresholds"
+            df.columns.name = "Rate"
+
+            fig_thresh = px.line(
+                df, title='TPR and FPR at every threshold',
+                width=700, height=500
+            )
+
+            fig_thresh.update_yaxes(scaleanchor="x", scaleratio=1)
+            fig_thresh.update_xaxes(range=[0, 1], constrain='domain')
+            fig_thresh.show()
         preds.extend(y_pred)
         targets.extend(y_test[target].tolist())
-        valid_mae = mean_absolute_error(y_test, y_pred)
-        mae_loss.append(valid_mae)
-        r2.append(r2_score(y_pred, y_test))
+        if ML_type == "regression":
+            metric1.append(mean_absolute_error(y_test, y_pred))
+            metric2.append(r2_score(y_pred, y_test))
+        else:
+            metric1.append(confusion_matrix(y_test, y_pred))
+            metric2.append(classification_report(y_test, y_pred, output_dict=True))
+    return preds, MOFS, targets, metric1, metric2, k, briers
+
+
+def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=None):
+    X, y = prepare_data(data, descriptors, target)
+    # set up model
+    if method == "RF":
+        model = RandomForestRegressor(n_estimators=500)
+    elif method == "MLR":
+        model = LinearRegression()
+    elif method == "SVM":
+        model = SVR(C=C, epsilon=epsilon, gamma=gamma)
+    else:
+        print("invalid model")
+        return
+    preds, MOFS, targets, mae_loss, r2, k, briers = run_model(model, X, y, target, "regression")
     # average mae
     avg_mae_valid_loss = sum(mae_loss) / k
     # average r2
@@ -202,3 +112,40 @@ def regression(data, descriptors, target, method):
                                columns=["MOF", target, target + " Prediction"])
     predictions = predictions.astype({target: 'float', target + ' Prediction': 'float'})
     return predictions, metrics
+
+
+def classification(data, descriptors, target, method):
+    X, y = prepare_data(data, descriptors, target)
+    # set up model
+    if method == "RF":
+        model = RandomForestClassifier(n_estimators=500)
+    elif method == "KNN":
+        model = KNeighborsClassifier(n_neighbors=12)
+    elif method == "SVM":
+        model = SVC(C=10, gamma="auto", probability=True)
+    else:
+        print("invalid model")
+        return
+    preds, MOFS, targets, confusion_matrices, classification_reports, k, briers = run_model(model, X, y, target,
+                                                                                                "classification")
+    predictions = pd.DataFrame(data=np.array([MOFS, targets, preds]).T,
+                               columns=["MOF", target, target + " Prediction"])
+    classes = ["HIGH", "LOW"]
+    metrics = ["precision", "recall", "f1-score", "support"]
+    classification_data = []
+    for c in classes:
+        class_list = [c]
+        for m in metrics:
+            class_list.append(np.mean([x[c][m] for x in classification_reports]))
+            class_list.append(np.std([x[c][m] for x in classification_reports]))
+        class_list.append(np.mean([x["accuracy"] for x in classification_reports]))
+        class_list.append(np.std([x["accuracy"] for x in classification_reports]))
+        class_list.append(np.mean([x[c] for x in briers]))
+        class_list.append(np.std([x[c] for x in briers]))
+        classification_data.append(class_list)
+    classification_data = pd.DataFrame(data=classification_data, columns=[
+        "Class", "Precision Mean", "Precision SD", "Recall Mean", "Recall SD", "F1 Score Mean", "F1 Score SD",
+        "Support Mean", "Support SD", "Accuracy Mean", "Accuracy SD", "Briers Mean", "Briers SD"
+    ])
+    classification_data.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_classification_report.csv")
+    predictions.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_predictions.csv")

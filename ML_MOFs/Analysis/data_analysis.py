@@ -7,7 +7,8 @@ pd.set_option('display.precision', 2)
 
 # load data
 df_data = pd.read_csv("../Data/MOF_data.csv")
-targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
+targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)", "SC CH4 loading (mol/kg)", "TSN",
+           "LOG10 TSN"]
 initial_descriptors = ["PLD", "LCD", "Density (g/cc)", "VSA (m2/cc)", "GSA (m2/g)", "VF", "PV (cc/g)", "K0_CH4",
                        "K0_CO2", "K0_H2S", "K0_H2O", "DC_CH4", "DC_CO2", "DC_H2S", "P_CH4", "P_CO2", "P_H2S", "Qst_CH4",
                        "Qst_CO2", "Qst_H2S", "Qst_H2O"]
@@ -15,8 +16,8 @@ initial_descriptors = ["PLD", "LCD", "Density (g/cc)", "VSA (m2/cc)", "GSA (m2/g
 log10_descriptors = ["PLD log10", "LCD log10", "PV (cc/g) log10", "K0_CH4 log10", "K0_CO2 log10", "K0_H2S log10",
                      "K0_H2O log10", "DC_CH4 log10", "DC_CO2 log10", "DC_H2S log10", "P_CH4 log10", "P_CO2 log10",
                      "P_H2S log10"]
-final_descriptors = ["PLD (log10)", "LCD (log10)", "Density (g/cc)", "VSA (m2/cc)", "VF", "DC_CH4 (log10)",
-                     "DC_CO2 (log10)", "DC_H2S (log10)", "Qst_CH4", "Qst_CO2", "Qst_H2S", "Qst_H2O"]
+final_descriptors = ["PLD log10", "LCD log10", "Density (g/cc)", "VSA (m2/cc)", "VF", "DC_CH4 log10",
+                     "DC_CO2 log10", "DC_H2S log10", "Qst_CH4", "Qst_CO2", "Qst_H2S", "Qst_H2O"]
 target_descriptors = df_data[targets + initial_descriptors + log10_descriptors]
 
 # Descriptor and target stats
@@ -26,7 +27,9 @@ print(descriptor_stats.to_latex(index=False))
 
 # target ranges
 df_targets = df_data[targets]
-range_subplot(df_targets, "target_ranges")
+target_chunks = [targets[i:i+4] for i in range(0, len(targets), 4)]
+for i in range(len(target_chunks)):
+    range_subplot(df_targets[target_chunks[i]], "target_ranges_" + str(i))
 
 # Initial descriptor ranges
 df_descriptors = target_descriptors[initial_descriptors]
