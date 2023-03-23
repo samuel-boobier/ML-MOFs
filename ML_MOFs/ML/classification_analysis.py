@@ -20,3 +20,32 @@ def get_classification_histogram(method):
 get_classification_histogram("RF")
 get_classification_histogram("SVM")
 get_classification_histogram("KNN")
+
+# need to average out rocs
+# df_roc = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_roc.csv")
+# fig_thresh = px.line(
+#                 df_roc, title='TPR and FPR at every threshold',
+#                 width=700, height=500
+#             )
+# fig_thresh.update_yaxes(scaleanchor="x", scaleratio=1)
+# fig_thresh.update_xaxes(range=[0, 1], constrain='domain')
+# fig_thresh.show()
+
+
+target = "TSN Class"
+
+
+def probability_plots(method):
+    df = pd.read_csv("..\\Results\\ML_results\\Classification\\" + method + "_predictions.csv")
+    # The histogram of scores compared to true labels
+    fig_hist = px.histogram(df, x="HIGH Probability", color="TSN Class", nbins=50, width=600, height=400,
+                            labels=dict(color='True Labels', x='Score'), barmode="overlay",
+                            title="TSN Class Probability vs TSN Class - " + method)
+    fig_hist.update_xaxes(range=[0, 1], constrain='domain')
+    filename = "../Graphs/ML_graphs/Classification/" + method + "_probs_histogram.png"
+    fig_hist.write_image(filename, scale=2)
+
+
+probability_plots("RF")
+probability_plots("SVM")
+probability_plots("KNN")

@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.svm import SVC, SVR
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
-import plotly
+import plotly.express as px
 
 
 def prepare_data(data, descriptors, target):
@@ -34,6 +34,8 @@ def run_model(model, X, y, target, ML_type):
     # targets list
     targets = []
     briers = []
+    probs = []
+    df_roc = None
     # get for each fold
     for train_index, test_index in kf.split(X):
         X_train, X_test = X.iloc[train_index, :], X.iloc[test_index, :]
@@ -47,38 +49,17 @@ def run_model(model, X, y, target, ML_type):
         y_pred = model.predict(X_test)
         if ML_type == "classification":
             high_probs = model.predict_proba(X_test)[:, 0]
-            low_probs = model.predict_proba(X_test)[:, 1]
-            briers.append({
-                "HIGH": brier_score_loss(y_test, high_probs, pos_label="HIGH"),
-                "LOW": brier_score_loss(y_test, low_probs, pos_label="LOW")
-            })
-            y_score = model.predict_proba(X)[:, 1]
-            fpr, tpr, thresholds = roc_curve(y, y_score)
-
-            # The histogram of scores compared to true labels
-            fig_hist = px.histogram(
-                x=y_score, color=y, nbins=50,
-                labels=dict(color='True Labels', x='Score')
-            )
-
-            fig_hist.show()
-
+            probs.extend(high_probs)
+            briers.append(brier_score_loss(y_test, high_probs, pos_label="HIGH"))
+            fpr, tpr, thresholds = roc_curve(y_test, high_probs, pos_label="HIGH")
             # Evaluating model performance at various thresholds
-            df = pd.DataFrame({
-                'False Positive Rate': fpr,
-                'True Positive Rate': tpr
-            }, index=thresholds)
-            df.index.name = "Thresholds"
-            df.columns.name = "Rate"
-
-            fig_thresh = px.line(
-                df, title='TPR and FPR at every threshold',
-                width=700, height=500
-            )
-
-            fig_thresh.update_yaxes(scaleanchor="x", scaleratio=1)
-            fig_thresh.update_xaxes(range=[0, 1], constrain='domain')
-            fig_thresh.show()
+            df_roc = pd.DataFrame(
+                {
+                    'False Positive Rate': fpr,
+                    'True Positive Rate': tpr
+                }, index=thresholds)
+            df_roc.index.name = "Thresholds"
+            df_roc.columns.name = "Rate"
         preds.extend(y_pred)
         targets.extend(y_test[target].tolist())
         if ML_type == "regression":
@@ -87,7 +68,7 @@ def run_model(model, X, y, target, ML_type):
         else:
             metric1.append(confusion_matrix(y_test, y_pred))
             metric2.append(classification_report(y_test, y_pred, output_dict=True))
-    return preds, MOFS, targets, metric1, metric2, k, briers
+    return preds, MOFS, targets, metric1, metric2, k, briers, probs, df_roc
 
 
 def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=None):
@@ -102,7 +83,7 @@ def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=No
     else:
         print("invalid model")
         return
-    preds, MOFS, targets, mae_loss, r2, k, briers = run_model(model, X, y, target, "regression")
+    preds, MOFS, targets, mae_loss, r2, k, briers, probs, df_roc = run_model(model, X, y, target, "regression")
     # average mae
     avg_mae_valid_loss = sum(mae_loss) / k
     # average r2
@@ -126,10 +107,10 @@ def classification(data, descriptors, target, method):
     else:
         print("invalid model")
         return
-    preds, MOFS, targets, confusion_matrices, classification_reports, k, briers = run_model(model, X, y, target,
-                                                                                                "classification")
-    predictions = pd.DataFrame(data=np.array([MOFS, targets, preds]).T,
-                               columns=["MOF", target, target + " Prediction"])
+    preds, MOFS, targets, confusion_matrices, \
+        classification_reports, k, briers, probs, df_roc = run_model(model, X, y, target, "classification")
+    predictions = pd.DataFrame(data=np.array([MOFS, targets, preds, probs]).T,
+                               columns=["MOF", target, target + " Prediction", "HIGH Probability"])
     classes = ["HIGH", "LOW"]
     metrics = ["precision", "recall", "f1-score", "support"]
     classification_data = []
@@ -140,8 +121,8 @@ def classification(data, descriptors, target, method):
             class_list.append(np.std([x[c][m] for x in classification_reports]))
         class_list.append(np.mean([x["accuracy"] for x in classification_reports]))
         class_list.append(np.std([x["accuracy"] for x in classification_reports]))
-        class_list.append(np.mean([x[c] for x in briers]))
-        class_list.append(np.std([x[c] for x in briers]))
+        class_list.append(np.mean(briers))
+        class_list.append(np.std(briers))
         classification_data.append(class_list)
     classification_data = pd.DataFrame(data=classification_data, columns=[
         "Class", "Precision Mean", "Precision SD", "Recall Mean", "Recall SD", "F1 Score Mean", "F1 Score SD",
@@ -149,3 +130,4 @@ def classification(data, descriptors, target, method):
     ])
     classification_data.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_classification_report.csv")
     predictions.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_predictions.csv")
+    df_roc.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_roc.csv")
