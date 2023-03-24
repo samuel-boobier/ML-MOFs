@@ -8,7 +8,15 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.svm import SVC, SVR
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
-import plotly.express as px
+
+
+def importance_method(importance, descriptors):
+    importance = np.array(importance).T
+    imp = [[np.mean(x), np.std(x)] for x in importance]
+    for i in range(len(descriptors)):
+        imp[i].insert(0, descriptors[i])
+    importance = pd.DataFrame(data=imp, columns=["Descriptor", "Importance Mean", "Importance SD"])
+    return importance
 
 
 def prepare_data(data, descriptors, target):
@@ -20,7 +28,7 @@ def prepare_data(data, descriptors, target):
     return X, y
 
 
-def run_model(model, X, y, target, ML_type):
+def run_model(model, X, y, target, ML_type, method):
     metric1 = []
     metric2 = []
     # number of folds
@@ -36,6 +44,7 @@ def run_model(model, X, y, target, ML_type):
     briers = []
     probs = []
     df_roc = None
+    importance = []
     # get for each fold
     for train_index, test_index in kf.split(X):
         X_train, X_test = X.iloc[train_index, :], X.iloc[test_index, :]
@@ -46,6 +55,8 @@ def run_model(model, X, y, target, ML_type):
         y_train = y_train.drop(columns=["MOF"])
         y_test = y_test.drop(columns=["MOF"])
         model.fit(X_train, y_train.values.ravel())
+        if method == "RF":
+            importance.append(model.feature_importances_)
         y_pred = model.predict(X_test)
         if ML_type == "classification":
             high_probs = model.predict_proba(X_test)[:, 0]
@@ -59,7 +70,7 @@ def run_model(model, X, y, target, ML_type):
         else:
             metric1.append(confusion_matrix(y_test, y_pred))
             metric2.append(classification_report(y_test, y_pred, output_dict=True))
-    return preds, MOFS, targets, metric1, metric2, k, briers, probs, df_roc
+    return preds, MOFS, targets, metric1, metric2, k, briers, probs, df_roc, importance
 
 
 def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=None):
@@ -74,7 +85,8 @@ def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=No
     else:
         print("invalid model")
         return
-    preds, MOFS, targets, mae_loss, r2, k, briers, probs, df_roc = run_model(model, X, y, target, "regression")
+    preds, MOFS, targets, mae_loss, r2, k, briers, probs, df_roc, importance = run_model(model, X, y, target,
+                                                                                         "regression", method)
     # average mae
     avg_mae_valid_loss = sum(mae_loss) / k
     # average r2
@@ -83,7 +95,10 @@ def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=No
     predictions = pd.DataFrame(data=np.array([MOFS, targets, preds]).T,
                                columns=["MOF", target, target + " Prediction"])
     predictions = predictions.astype({target: 'float', target + ' Prediction': 'float'})
-    return predictions, metrics
+    importance = None
+    if method == "RF":
+        importance = importance_method(importance, descriptors)
+    return predictions, metrics, importance
 
 
 def classification(data, descriptors, target, method):
@@ -98,8 +113,8 @@ def classification(data, descriptors, target, method):
     else:
         print("invalid model")
         return
-    preds, MOFS, targets, confusion_matrices, \
-        classification_reports, k, briers, probs, df_roc = run_model(model, X, y, target, "classification")
+    preds, MOFS, targets, confusion_matrices, classification_reports, \
+    k, briers, probs, df_roc, importance = run_model(model, X, y, target, "classification", method)
     predictions = pd.DataFrame(data=np.array([MOFS, targets, preds, probs]).T,
                                columns=["MOF", target, target + " Prediction", "HIGH Probability"])
     classes = ["HIGH", "LOW"]
@@ -131,3 +146,6 @@ def classification(data, descriptors, target, method):
     df_roc.index.name = "Thresholds"
     df_roc.columns.name = "Rate"
     df_roc.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_roc.csv")
+    if method == "RF":
+        importance = importance_method(importance, descriptors)
+        importance.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_importance.csv")
