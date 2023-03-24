@@ -10,12 +10,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
 
 
-def importance_method(importance, descriptors):
+def importance_method(importance, descriptors, target):
     importance = np.array(importance).T
     imp = [[np.mean(x), np.std(x)] for x in importance]
     for i in range(len(descriptors)):
         imp[i].insert(0, descriptors[i])
-    importance = pd.DataFrame(data=imp, columns=["Descriptor", "Importance Mean", "Importance SD"])
+    importance = pd.DataFrame(data=imp, columns=["Descriptor", target + " Mean", target + " SD"])
     return importance
 
 
@@ -95,9 +95,10 @@ def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=No
     predictions = pd.DataFrame(data=np.array([MOFS, targets, preds]).T,
                                columns=["MOF", target, target + " Prediction"])
     predictions = predictions.astype({target: 'float', target + ' Prediction': 'float'})
-    importance = None
     if method == "RF":
-        importance = importance_method(importance, descriptors)
+        importance = importance_method(importance, descriptors, target)
+    else:
+        importance = None
     return predictions, metrics, importance
 
 
@@ -147,5 +148,5 @@ def classification(data, descriptors, target, method):
     df_roc.columns.name = "Rate"
     df_roc.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_roc.csv")
     if method == "RF":
-        importance = importance_method(importance, descriptors)
+        importance = importance_method(importance, descriptors, target)
         importance.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_importance.csv")
