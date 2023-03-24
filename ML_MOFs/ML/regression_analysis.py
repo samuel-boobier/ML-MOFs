@@ -8,17 +8,31 @@ regression_targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 lo
                       "SC CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
 methods = ["MLR", "RF", "SVM"]
 
-# histogram of error vs target range
+# # histogram of error vs target range
+# for method in methods:
+#     data = pd.read_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
+#     for target in regression_targets:
+#         data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
+#         fig = px.histogram(data, x=target + " Error", width=600,
+#                            height=400, title=target + " Errors - " + method)
+#         target = target.replace("(", "_")
+#         target = target.replace(")", "_")
+#         target = target.replace("/", "_")
+#         filename = "../Graphs/ML_graphs/Regression/" + method + "_" + target + "_error_histogram.png"
+#         fig.write_image(filename, scale=2)
+
+
+# scatter of error vs target
 for method in methods:
     data = pd.read_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
     for target in regression_targets:
         data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
-        fig = px.histogram(data, x=target + " Error", width=600,
-                           height=400, title=target + " Errors - " + method)
+        fig = px.scatter(data, x=target, y=target + " Error", width=600,
+                         height=400, title=target + " Error vs " + target + " - " + method)
         target = target.replace("(", "_")
         target = target.replace(")", "_")
         target = target.replace("/", "_")
-        filename = "../Graphs/ML_graphs/Regression/" + method + "_" + target + "_error_histogram.png"
+        filename = "../Graphs/ML_graphs/Regression/" + method + "_" + target + "_error_scatter.png"
         fig.write_image(filename, scale=2)
 
 
