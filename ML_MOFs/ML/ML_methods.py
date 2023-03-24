@@ -51,15 +51,6 @@ def run_model(model, X, y, target, ML_type):
             high_probs = model.predict_proba(X_test)[:, 0]
             probs.extend(high_probs)
             briers.append(brier_score_loss(y_test, high_probs, pos_label="HIGH"))
-            fpr, tpr, thresholds = roc_curve(y_test, high_probs, pos_label="HIGH")
-            # Evaluating model performance at various thresholds
-            df_roc = pd.DataFrame(
-                {
-                    'False Positive Rate': fpr,
-                    'True Positive Rate': tpr
-                }, index=thresholds)
-            df_roc.index.name = "Thresholds"
-            df_roc.columns.name = "Rate"
         preds.extend(y_pred)
         targets.extend(y_test[target].tolist())
         if ML_type == "regression":
@@ -130,4 +121,13 @@ def classification(data, descriptors, target, method):
     ])
     classification_data.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_classification_report.csv")
     predictions.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_predictions.csv")
+    fpr, tpr, thresholds = roc_curve(targets, probs, pos_label="HIGH")
+    # Evaluating model performance at various thresholds
+    df_roc = pd.DataFrame(
+        {
+            'False Positive Rate': fpr,
+            'True Positive Rate': tpr
+        }, index=thresholds)
+    df_roc.index.name = "Thresholds"
+    df_roc.columns.name = "Rate"
     df_roc.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_roc.csv")

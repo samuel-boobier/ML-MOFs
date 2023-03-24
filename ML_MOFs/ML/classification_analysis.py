@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+from sklearn.metrics import auc
 
 
 # plot histogram of HIGH and LOW predictions compared to TSN
@@ -21,17 +22,35 @@ get_classification_histogram("RF")
 get_classification_histogram("SVM")
 get_classification_histogram("KNN")
 
-# need to average out rocs
-# df_roc = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_roc.csv")
-# fig_thresh = px.line(
-#                 df_roc, title='TPR and FPR at every threshold',
-#                 width=700, height=500
-#             )
-# fig_thresh.update_yaxes(scaleanchor="x", scaleratio=1)
-# fig_thresh.update_xaxes(range=[0, 1], constrain='domain')
-# fig_thresh.show()
+
+# roc plots
+def roc_plot(method):
+    df_roc = pd.read_csv("..\\Results\\ML_results\\Classification\\" + method + "_roc.csv")
+
+    fpr = df_roc["False Positive Rate"].tolist()
+    tpr = df_roc["True Positive Rate"].tolist()
+
+    fig = px.area(
+        x=fpr, y=tpr,
+        labels=dict(x='False Positive Rate', y='True Positive Rate'),
+        width=400, height=400
+    )
+    fig.add_shape(
+        type='line', line=dict(dash='dash'),
+        x0=0, x1=1, y0=0, y1=1
+    )
+    fig.update_layout(title_text='ROC Curve - ' + method + f' (AUC={auc(fpr, tpr):.4f})', title_x=0.5)
+    fig.update_yaxes(range=[0, 1])
+    fig.update_xaxes(range=[0, 1])
+    filename = "../Graphs/ML_graphs/Classification/" + method + "_roc_curve.png"
+    fig.write_image(filename, scale=2)
 
 
+roc_plot("RF")
+roc_plot("SVM")
+roc_plot("KNN")
+
+# probability plots
 target = "TSN Class"
 
 
