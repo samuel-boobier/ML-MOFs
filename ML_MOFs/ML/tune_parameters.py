@@ -35,8 +35,8 @@ def get_parameters(data, descriptors, target, model, param_grid):
 
 data = pd.read_csv("..\\Data\\MOF_data.csv")
 
-final_descriptors = ["PLD log10", "LCD log10", "Density (g/cc)", "VSA (m2/cc)", "VF", "DC_CH4 log10",
-                     "DC_CO2 log10", "DC_H2S log10", "Qst_CH4", "Qst_CO2", "Qst_H2S", "Qst_H2O"]
+final_descriptors = ["PLD log10", "LCD log10", "Density (g/cc)", "VSA (m2/cc)", "VF", "Qst_CH4", "Qst_CO2", "Qst_H2S",
+                     "Qst_H2O"]
 # regression_targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)",
 #                       "SC CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
 #

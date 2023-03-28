@@ -16,8 +16,8 @@ initial_descriptors = ["PLD", "LCD", "Density (g/cc)", "VSA (m2/cc)", "GSA (m2/g
 log10_descriptors = ["PLD log10", "LCD log10", "PV (cc/g) log10", "K0_CH4 log10", "K0_CO2 log10", "K0_H2S log10",
                      "K0_H2O log10", "DC_CH4 log10", "DC_CO2 log10", "DC_H2S log10", "P_CH4 log10", "P_CO2 log10",
                      "P_H2S log10"]
-final_descriptors = ["PLD log10", "LCD log10", "Density (g/cc)", "VSA (m2/cc)", "VF", "DC_CH4 log10",
-                     "DC_CO2 log10", "DC_H2S log10", "Qst_CH4", "Qst_CO2", "Qst_H2S", "Qst_H2O"]
+final_descriptors = ["PLD log10", "LCD log10", "Density (g/cc)", "VSA (m2/cc)", "VF", "Qst_CH4", "Qst_CO2", "Qst_H2S",
+                     "Qst_H2O"]
 target_descriptors = df_data[targets + initial_descriptors + log10_descriptors]
 
 # Descriptor and target stats

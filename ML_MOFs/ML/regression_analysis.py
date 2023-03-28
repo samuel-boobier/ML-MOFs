@@ -2,7 +2,7 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
-
+from sklearn.metrics import r2_score
 
 regression_targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)",
                       "SC CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
@@ -22,19 +22,19 @@ methods = ["MLR", "RF", "SVM"]
 #         fig.write_image(filename, scale=2)
 
 
-# scatter of error vs target
-for method in methods:
-    data = pd.read_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
-    for target in regression_targets:
-        data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
-        fig = px.scatter(data, x=target, y=target + " Error", width=600,
-                         height=400, title=target + " Error vs " + target + " - " + method)
-        target = target.replace("(", "_")
-        target = target.replace(")", "_")
-        target = target.replace("/", "_")
-        filename = "../Graphs/ML_graphs/Regression/" + method + "_" + target + "_error_scatter.png"
-        fig.write_image(filename, scale=2)
-
+# # scatter of error vs target
+# for method in methods:
+#     data = pd.read_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
+#     for target in regression_targets:
+#         data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
+#         fig = px.scatter(data, x=target, y=target + " Error", width=600,
+#                          height=400, title=target + " Error vs " + target + " - " + method)
+#         target = target.replace("(", "_")
+#         target = target.replace(")", "_")
+#         target = target.replace("/", "_")
+#         filename = "../Graphs/ML_graphs/Regression/" + method + "_" + target + "_error_scatter.png"
+#         fig.write_image(filename, scale=2)
+#
 
 # df = pd.read_csv("..\\Results\\ML_results\\regression\\RF_importance.csv")
 # # feature importance for each target
