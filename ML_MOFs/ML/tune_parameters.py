@@ -37,12 +37,12 @@ data = pd.read_csv("..\\Data\\MOF_data.csv")
 
 final_descriptors = ["PLD log10", "LCD log10", "Density (g/cc)", "VSA (m2/cc)", "VF", "Qst_CH4", "Qst_CO2", "Qst_H2S",
                      "Qst_H2O"]
-# regression_targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)",
-#                       "SC CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
-#
-# for target in regression_targets:
-#     get_parameters(data, final_descriptors, target, SVR(), param_grid_svm)
+regression_targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)",
+                      "SC CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
+
+for target in regression_targets:
+    get_parameters(data, final_descriptors, target, SVR(), param_grid_svm)
 
 classification_target = "TSN Class"
-# get_parameters(data, final_descriptors, classification_target, KNeighborsClassifier(), param_grid_knn)
+get_parameters(data, final_descriptors, classification_target, KNeighborsClassifier(), param_grid_knn)
 get_parameters(data, final_descriptors, classification_target, SVC(), param_grid_svm_classification)

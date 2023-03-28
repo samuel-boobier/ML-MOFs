@@ -72,8 +72,8 @@ probability_plots("KNN")
 # importance plot
 
 data = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_importance.csv")
-data = data.sort_values(by="Importance Mean", ascending=False)
-fig = px.bar(data, x='Descriptor', y='Importance Mean', error_y='Importance SD', width=600, height=500,
+data = data.sort_values(by="TSN Class Mean", ascending=False)
+fig = px.bar(data, x='Descriptor', y='TSN Class Mean', error_y='TSN Class SD', width=600, height=500,
              title="Feature Importance - RF")
 fig.update_xaxes(tickangle=90)
 filename = "../Graphs/ML_graphs/Classification/RF_importance.png"
