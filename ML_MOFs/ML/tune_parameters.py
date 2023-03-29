@@ -27,7 +27,7 @@ def get_parameters(data, descriptors, target, model, param_grid):
     # scale descriptors
     X = StandardScaler().fit_transform(X)
     X = pd.DataFrame(data=X, columns=descriptors)
-    grid = GridSearchCV(model, param_grid, refit=True, verbose=3)
+    grid = GridSearchCV(model, param_grid, refit=True, verbose=0)
     # fitting the model for grid search
     grid.fit(X, y)
     print(grid.best_params_)

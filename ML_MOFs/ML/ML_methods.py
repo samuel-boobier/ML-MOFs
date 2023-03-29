@@ -108,9 +108,9 @@ def classification(data, descriptors, target, method):
     if method == "RF":
         model = RandomForestClassifier(n_estimators=500)
     elif method == "KNN":
-        model = KNeighborsClassifier(n_neighbors=12)
+        model = KNeighborsClassifier(n_neighbors=5)
     elif method == "SVM":
-        model = SVC(C=10, gamma="auto", probability=True)
+        model = SVC(C=1, gamma="scale", probability=True)
     else:
         print("invalid model")
         return

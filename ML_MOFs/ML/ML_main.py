@@ -16,11 +16,11 @@ intervals = {
     "LOG10 TSN": 0.5
 }
 SVM_parameters = {
-    "CO2 loading (mol/kg)": {"C": 100, "epsilon": 0.001, "gamma": 0.01},
-    "CH4 loading (mol/kg)": {"C": 100, "epsilon": 0.1, "gamma": 0.01},
+    "CO2 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": 0.1},
+    "CH4 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": 0.1},
     "SC CO2 loading (mol/kg)": {"C": 1000, "epsilon": 0.1, "gamma": 0.01},
-    "SC CH4 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": "scale"},
-    "TSN": {"C": 10, "epsilon": 1, "gamma": "auto"},
+    "SC CH4 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": 0.1},
+    "TSN": {"C": 10, "epsilon": 0.1, "gamma": "auto"},
     "LOG10 TSN": {"C": 100, "epsilon": 0.1, "gamma": 0.01}
 }
 
