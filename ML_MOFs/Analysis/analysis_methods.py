@@ -6,7 +6,6 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 
-
 # calculate the min, max, mean, median, and std of data
 def data_analysis_table(df):
     stats = []
