@@ -85,19 +85,19 @@ train_data = pd.read_csv("..\\Data\\MOF_data.csv")
 test_data = pd.read_csv("..\\Data\\MOF_data_test.csv")
 
 # regression
-# regression_metrics = []
-# target_predictions = pd.DataFrame()
-# for target in regression_targets:
-#     r_metrics, t_preds = test_model_regression(train_data, test_data, final_descriptors, target,
-#                                                  SVM_parameters[target]["C"], SVM_parameters[target]["epsilon"],
-#                                                  SVM_parameters[target]["gamma"])
-#     for met in r_metrics:
-#         regression_metrics.append(met)
-#     t_preds = pd.DataFrame(data=np.array(t_preds).T, columns=["MOF", "Target", "Real", "MLR", "SVM", "RF"])
-#     target_predictions = pd.concat([target_predictions, t_preds])
-# regression_metrics = pd.DataFrame(data=regression_metrics, columns=["Target", "Method", "MAE", "R2"])
-# regression_metrics.to_csv("../Results/ML_results/Test_set/regression_metrics.csv")
-# target_predictions.to_csv("../Results/ML_results/Test_set/regression_predictions.csv")
+regression_metrics = []
+target_predictions = pd.DataFrame()
+for target in regression_targets:
+    r_metrics, t_preds = test_model_regression(train_data, test_data, final_descriptors, target,
+                                                 SVM_parameters[target]["C"], SVM_parameters[target]["epsilon"],
+                                                 SVM_parameters[target]["gamma"])
+    for met in r_metrics:
+        regression_metrics.append(met)
+    t_preds = pd.DataFrame(data=np.array(t_preds).T, columns=["MOF", "Target", "Real", "MLR", "SVM", "RF"])
+    target_predictions = pd.concat([target_predictions, t_preds])
+regression_metrics = pd.DataFrame(data=regression_metrics, columns=["Target", "Method", "MAE", "R2"])
+regression_metrics.to_csv("../Results/ML_results/Test_set/regression_metrics.csv")
+target_predictions.to_csv("../Results/ML_results/Test_set/regression_predictions.csv")
 
 # classification
 ML_methods = ["RF", "SVM", "KNN"]
