@@ -24,35 +24,35 @@ SVM_parameters = {
     "LOG10 TSN": {"C": 100, "epsilon": 0.1, "gamma": 0.01}
 }
 
-# # regression
-# # ML_methods = ["RF", "MLR", "SVM"]
+# regression
 # ML_methods = ["RF", "MLR", "SVM"]
-# for method in ML_methods:
-#     ML_metrics = []
-#     ML_preds = data[["MOF"]]
-#     importance_ls = pd.DataFrame(final_descriptors, columns=["Descriptor"])
-#     for target in regression_targets:
-#         if method == "SVM":
-#             predictions, metrics, _ = regression(data, final_descriptors, target, method, SVM_parameters[target]["C"],
-#                                                  SVM_parameters[target]["epsilon"], SVM_parameters[target]["gamma"])
-#         elif method == "RF":
-#             predictions, metrics, importance = regression(data, final_descriptors, target, method)
-#             importance_ls = pd.merge(importance_ls, importance, on=["Descriptor", "Descriptor"])
-#         else:
-#             predictions, metrics, _ = regression(data, final_descriptors, target, method)
-#         get_graph(predictions, target, method, intervals[target])
-#         ML_metrics.append(metrics)
-#         ML_preds = pd.merge(ML_preds, predictions, on=["MOF", "MOF"])
-#     ML_metrics = pd.DataFrame(data=ML_metrics, columns=["Target", "Method", "Mean R2", "SD R2", "Mean MAE", "SD MAE",
-#                                                         "Target SD"])
-#     ML_metrics.to_csv("..\\Results\\ML_results\\regression\\" + method + "_metrics.csv")
-#     ML_preds.to_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
-#     if method == "RF":
-#         importance_ls.to_csv("..\\Results\\ML_results\\regression\\" + method + "_importance.csv")
-#
-# # classification
-# # ML_methods = ["RF", "SVM", "KNN"]
+ML_methods = ["RF", "MLR", "SVM"]
+for method in ML_methods:
+    ML_metrics = []
+    ML_preds = data[["MOF"]]
+    importance_ls = pd.DataFrame(final_descriptors, columns=["Descriptor"])
+    for target in regression_targets:
+        if method == "SVM":
+            predictions, metrics, _ = regression(data, final_descriptors, target, method, SVM_parameters[target]["C"],
+                                                 SVM_parameters[target]["epsilon"], SVM_parameters[target]["gamma"])
+        elif method == "RF":
+            predictions, metrics, importance = regression(data, final_descriptors, target, method)
+            importance_ls = pd.merge(importance_ls, importance, on=["Descriptor", "Descriptor"])
+        else:
+            predictions, metrics, _ = regression(data, final_descriptors, target, method)
+        get_graph(predictions, target, method, intervals[target])
+        ML_metrics.append(metrics)
+        ML_preds = pd.merge(ML_preds, predictions, on=["MOF", "MOF"])
+    ML_metrics = pd.DataFrame(data=ML_metrics, columns=["Target", "Method", "Mean R2", "SD R2", "Mean MAE", "SD MAE",
+                                                        "Target SD"])
+    ML_metrics.to_csv("..\\Results\\ML_results\\regression\\" + method + "_metrics.csv")
+    ML_preds.to_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
+    if method == "RF":
+        importance_ls.to_csv("..\\Results\\ML_results\\regression\\" + method + "_importance.csv")
+
+# classification
 # ML_methods = ["RF", "SVM", "KNN"]
-# target = "TSN Class"
-# for method in ML_methods:
-#     classification(data, final_descriptors, target, method)
+ML_methods = ["RF", "SVM", "KNN"]
+target = "TSN Class"
+for method in ML_methods:
+    classification(data, final_descriptors, target, method)

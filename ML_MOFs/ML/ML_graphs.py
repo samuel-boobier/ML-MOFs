@@ -23,7 +23,7 @@ def get_graph(data, target, method, interval):
     target = target.replace("(", "_")
     target = target.replace(")", "_")
     target = target.replace("/", "_")
-    filename = "..\\Results\\ML_results\\Test_set\\" + method + "_" + target + ".png"
+    filename = "..\\Graphs\\ML_graphs\\Regression\\" + method + "_" + target + ".png"
     fig.write_image(filename, scale=2)
 
 
