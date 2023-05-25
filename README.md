@@ -18,9 +18,8 @@ The kaleido package is required to save graphs. Install this using pip.
 <br>
 
 `pip install -U kaleido`
-<h2>Datasets</h2>`ML_MOFs/Data/`
-`ML_MOFs/Data/`
-Found in `ML_MOFs/Data/`
+<h2>Datasets</h2>
+All the data used in this study can be found in `ML_MOFs/Data/`
 <br><br>
 MOF_data_test.csv - Target and descriptor values for the training set
 <br>
