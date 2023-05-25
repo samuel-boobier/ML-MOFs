@@ -2,14 +2,15 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
-from sklearn.metrics import r2_score
 
 regression_targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)",
                       "SC CH4 loading (mol/kg)", "TSN", "LOG10 TSN"]
 methods = ["MLR", "RF", "SVM"]
 
+# Note you'll need to change the data source to analyse test set predictions
 # histogram of error vs target range
 for method in methods:
+    # change here for test results
     data = pd.read_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
     for target in regression_targets:
         data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
@@ -24,6 +25,7 @@ for method in methods:
 
 # scatter of error vs target
 for method in methods:
+    # change here for test results
     data = pd.read_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
     for target in regression_targets:
         data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
@@ -44,6 +46,7 @@ axis_titles = {
     "LOG10 TSN": "log<sub>10</sub> TSN"
 }
 
+# change here for test results
 df = pd.read_csv("..\\Results\\ML_results\\regression\\RF_importance.csv")
 # feature importance for each target
 data = [go.Bar(name=axis_titles[x], x=df["Descriptor"], y=df[x + " Mean"], error_y=dict(type='data',
