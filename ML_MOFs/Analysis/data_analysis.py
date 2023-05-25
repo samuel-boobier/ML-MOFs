@@ -1,5 +1,4 @@
 import pandas as pd
-from numpy import log10, floor
 from analysis_methods import data_analysis_table, range_subplot, corr_graph, plot
 
 pd.set_option('display.precision', 2)
@@ -7,8 +6,11 @@ pd.set_option('display.precision', 2)
 
 # load data
 df_data = pd.read_csv("../Data/MOF_data.csv")
-targets = ["CO2 loading (mol/kg)", "CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)", "SC CH4 loading (mol/kg)", "TSN",
-           "LOG10 TSN"]
+# rename targets
+df_data = df_data.rename(columns={'CO2 loading (mol/kg)': 'BM CO2 loading (mol/kg)',
+                                  'CH4 loading (mol/kg)': 'BM CH4 loading (mol/kg)'})
+targets = ["BM CO2 loading (mol/kg)", "BM CH4 loading (mol/kg)", "SC CO2 loading (mol/kg)", "SC CH4 loading (mol/kg)",
+           "TSN", "LOG10 TSN"]
 initial_descriptors = ["PLD", "LCD", "Density (g/cc)", "VSA (m2/cc)", "GSA (m2/g)", "VF", "PV (cc/g)", "K0_CH4",
                        "K0_CO2", "K0_H2S", "K0_H2O", "DC_CH4", "DC_CO2", "DC_H2S", "P_CH4", "P_CO2", "P_H2S", "Qst_CH4",
                        "Qst_CO2", "Qst_H2S", "Qst_H2O"]

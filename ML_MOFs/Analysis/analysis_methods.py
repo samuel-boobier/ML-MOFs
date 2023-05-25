@@ -25,9 +25,12 @@ def range_subplot(df, file_name):
     for n in range(len(title_names)):
         if len(title_names[n]) > 25:
             title_names[n] = title_names[n][0:24]
-
-    fig = make_subplots(rows=math.ceil(len(descriptor_names) / 2), cols=math.ceil(len(descriptor_names) / 2),
-                        subplot_titles=title_names, horizontal_spacing=0.06, vertical_spacing=0.12)
+    if len(descriptor_names) == 2:
+        fig = make_subplots(rows=1, cols=2,
+                            subplot_titles=title_names, horizontal_spacing=0.06, vertical_spacing=0.12)
+    else:
+        fig = make_subplots(rows=math.ceil(len(descriptor_names) / 2), cols=math.ceil(len(descriptor_names) / 2),
+                            subplot_titles=title_names, horizontal_spacing=0.06, vertical_spacing=0.12)
     for desc in range(len(descriptor_names)):
         if (desc + 1) % 2 == 1:
             fig.add_trace(go.Histogram(x=df[descriptor_names[desc]], marker=dict(color="#1f77b4")),
