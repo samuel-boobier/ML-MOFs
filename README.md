@@ -21,7 +21,7 @@ The kaleido package is required to save graphs. Install this using pip.
 <h2>Datasets</h2>
 All the data used in this study can be found in ML_MOFs/Data/
 <br><br>
-MOF_data_test.csv - Target and descriptor values for the training set
+MOF_data.csv - Target and descriptor values for the training set
 <br>
 MOF_data_test.csv - Target and descriptor values for the test set
 
