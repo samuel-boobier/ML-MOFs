@@ -115,7 +115,6 @@ def run_model(model, X, y, target, ML_type, method):
             metric1.append(confusion_matrix(y_test, y_pred))
             metric2.append(classification_report(y_test, y_pred, output_dict=True))
     params_df = pd.DataFrame(params_list)
-    print(params_df)
     return preds, MOFS, targets, metric1, metric2, k, briers, probs, df_roc, importance, params_df
 
 

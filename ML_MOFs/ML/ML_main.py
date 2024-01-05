@@ -31,10 +31,10 @@ for method in ML_methods:
             params_df["Target"] = [target for _ in params_df.shape[0]]
             SVM_params.append(params_df)
         elif method == "RF":
-            predictions, metrics, importance = regression(data, final_descriptors, target, method)
+            predictions, metrics, importance, _ = regression(data, final_descriptors, target, method)
             importance_ls = pd.merge(importance_ls, importance, on=["Descriptor", "Descriptor"])
         else:
-            predictions, metrics, _ = regression(data, final_descriptors, target, method)
+            predictions, metrics, _, _ = regression(data, final_descriptors, target, method)
         get_graph(predictions, target, method, intervals[target])
         ML_metrics.append(metrics)
         ML_preds = pd.merge(ML_preds, predictions, on=["MOF", "MOF"])
