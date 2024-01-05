@@ -15,26 +15,21 @@ intervals = {
     "TSN": 5,
     "LOG10 TSN": 0.5
 }
-SVM_parameters = {
-    "CO2 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": 0.1},
-    "CH4 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": 0.1},
-    "SC CO2 loading (mol/kg)": {"C": 1000, "epsilon": 0.1, "gamma": 0.01},
-    "SC CH4 loading (mol/kg)": {"C": 10, "epsilon": 0.1, "gamma": 0.1},
-    "TSN": {"C": 10, "epsilon": 0.1, "gamma": "auto"},
-    "LOG10 TSN": {"C": 100, "epsilon": 0.1, "gamma": 0.01}
-}
 
 # regression
 # ML_methods = ["RF", "MLR", "SVM"]
-ML_methods = ["RF", "MLR", "SVM"]
+ML_methods = ["MLR", "SVM"]
 for method in ML_methods:
+    if method == "SVM":
+        SVM_params = []
     ML_metrics = []
     ML_preds = data[["MOF"]]
     importance_ls = pd.DataFrame(final_descriptors, columns=["Descriptor"])
     for target in regression_targets:
         if method == "SVM":
-            predictions, metrics, _ = regression(data, final_descriptors, target, method, SVM_parameters[target]["C"],
-                                                 SVM_parameters[target]["epsilon"], SVM_parameters[target]["gamma"])
+            predictions, metrics, _, params_df = regression(data, final_descriptors, target, method)
+            params_df["Target"] = [target for _ in params_df.shape[0]]
+            SVM_params.append(params_df)
         elif method == "RF":
             predictions, metrics, importance = regression(data, final_descriptors, target, method)
             importance_ls = pd.merge(importance_ls, importance, on=["Descriptor", "Descriptor"])
@@ -49,10 +44,14 @@ for method in ML_methods:
     ML_preds.to_csv("..\\Results\\ML_results\\regression\\" + method + "_predictions.csv")
     if method == "RF":
         importance_ls.to_csv("..\\Results\\ML_results\\regression\\" + method + "_importance.csv")
+    if method == "SVM":
+        SVM_params = pd.concat(SVM_params)
+        SVM_params.to_csv("..\\Results\\Hyperparameters\\Regression\\" + method + "_hyperparameters.csv")
+
 
 # classification
 # ML_methods = ["RF", "SVM", "KNN"]
-ML_methods = ["RF", "SVM", "KNN"]
+ML_methods = ["KNN"]
 target = "TSN Class"
 for method in ML_methods:
     classification(data, final_descriptors, target, method)

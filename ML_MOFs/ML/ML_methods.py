@@ -8,6 +8,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.svm import SVC, SVR
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
+from tune_parameters import get_parameters
+import re
 
 
 def importance_method(importance, descriptors, target):
@@ -23,16 +25,25 @@ def prepare_data(data, descriptors, target):
     X = data[descriptors]
     y = data[[target, "MOF"]]
     # scale descriptors
-    X = StandardScaler().fit_transform(X)
     X = pd.DataFrame(data=X, columns=descriptors)
     return X, y
+
+
+def nested_cross_validation(X, y, model, method, ML_type):
+    print("Running nested CV to optimise hyperparameters")
+    best_params = get_parameters(X, y, model, method, ML_type)
+    old_keys = list(best_params.keys())
+    new_keys = [re.sub(".*__", "", x) for x in old_keys]
+    for i in range(len(old_keys)):
+        best_params[new_keys[i]] = best_params.pop(old_keys[i])
+    return best_params
 
 
 def run_model(model, X, y, target, ML_type, method):
     metric1 = []
     metric2 = []
     # number of folds
-    k = 10
+    k = 3
     # set up cross validation
     kf = KFold(n_splits=k, random_state=None, shuffle=True)
     # prediction list
@@ -45,6 +56,7 @@ def run_model(model, X, y, target, ML_type, method):
     probs = []
     df_roc = None
     importance = []
+    params_list = []
     # get for each fold
     for train_index, test_index in kf.split(X):
         X_train, X_test = X.iloc[train_index, :], X.iloc[test_index, :]
@@ -54,6 +66,38 @@ def run_model(model, X, y, target, ML_type, method):
         # remove target values from y
         y_train = y_train.drop(columns=["MOF"])
         y_test = y_test.drop(columns=["MOF"])
+        # nested cross validation for KNN and SVM, otherwise set parameters for RF and MLR
+        if ML_type == "regression":
+            if method == "SVM":
+                best_params = nested_cross_validation(X_train, y_train.values.ravel(), model, method, ML_type)
+                model.set_params(**best_params)
+                params_list.append(best_params)
+            elif method == "RF":
+                print("Using set parameters")
+                model.set_params(n_estimators=500)
+            else:
+                # must be multiple linear regression
+                print("Using set parameters")
+                model.set_params()
+        else:
+            # must be classification
+            if method == "SVM":
+                best_params = nested_cross_validation(X_train, y_train.values.ravel(), model, method, ML_type)
+                params_list.append(best_params)
+                best_params["probability"] = True
+                model.set_params(**best_params)
+            elif method == "KNN":
+                best_params = nested_cross_validation(X_train, y_train.values.ravel(), model, method, ML_type)
+                params_list.append(best_params)
+                model.set_params(**best_params)
+            else:
+                # must be random forest
+                print("Using set parameters")
+                model.set_params(n_estimators=500)
+        # scale
+        scaler = StandardScaler().fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
         model.fit(X_train, y_train.values.ravel())
         if method == "RF":
             importance.append(model.feature_importances_)
@@ -70,23 +114,27 @@ def run_model(model, X, y, target, ML_type, method):
         else:
             metric1.append(confusion_matrix(y_test, y_pred))
             metric2.append(classification_report(y_test, y_pred, output_dict=True))
-    return preds, MOFS, targets, metric1, metric2, k, briers, probs, df_roc, importance
+    params_df = pd.DataFrame(params_list)
+    print(params_df)
+    return preds, MOFS, targets, metric1, metric2, k, briers, probs, df_roc, importance, params_df
 
 
-def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=None):
+def regression(data, descriptors, target, method):
     X, y = prepare_data(data, descriptors, target)
     # set up model
     if method == "RF":
-        model = RandomForestRegressor(n_estimators=500)
+        model = RandomForestRegressor()
     elif method == "MLR":
         model = LinearRegression()
     elif method == "SVM":
-        model = SVR(C=C, epsilon=epsilon, gamma=gamma)
+        model = SVR()
     else:
         print("invalid model")
         return
-    preds, MOFS, targets, mae_loss, r2, k, briers, probs, df_roc, importance = run_model(model, X, y, target,
-                                                                                         "regression", method)
+    preds, MOFS, targets, mae_loss, r2, k, briers, probs, df_roc, importance, params_df = run_model(model, X, y,
+                                                                                                      target,
+                                                                                                      "regression",
+                                                                                                      method)
     # average mae
     avg_mae_valid_loss = sum(mae_loss) / k
     # average r2
@@ -99,23 +147,23 @@ def regression(data, descriptors, target, method, C=None, epsilon=None, gamma=No
         importance = importance_method(importance, descriptors, target)
     else:
         importance = None
-    return predictions, metrics, importance
+    return predictions, metrics, importance, params_df
 
 
 def classification(data, descriptors, target, method):
     X, y = prepare_data(data, descriptors, target)
     # set up model
     if method == "RF":
-        model = RandomForestClassifier(n_estimators=500)
+        model = RandomForestClassifier()
     elif method == "KNN":
-        model = KNeighborsClassifier(n_neighbors=5)
+        model = KNeighborsClassifier()
     elif method == "SVM":
-        model = SVC(C=1, gamma="scale", probability=True)
+        model = SVC()
     else:
         print("invalid model")
         return
     preds, MOFS, targets, confusion_matrices, classification_reports, \
-    k, briers, probs, df_roc, importance = run_model(model, X, y, target, "classification", method)
+    k, briers, probs, df_roc, importance, params_df = run_model(model, X, y, target, "classification", method)
     predictions = pd.DataFrame(data=np.array([MOFS, targets, preds, probs]).T,
                                columns=["MOF", target, target + " Prediction", "HIGH Probability"])
     classes = ["HIGH", "LOW"]
@@ -137,6 +185,8 @@ def classification(data, descriptors, target, method):
     ])
     classification_data.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_classification_report.csv")
     predictions.to_csv("..\\Results\\ML_results\\Classification\\" + method + "_predictions.csv")
+    if method in ["SVM", "KNN"]:
+        params_df.to_csv("..\\Results\\Hyperparameters\\Classification\\" + method + "_hyperparameters.csv")
     fpr, tpr, thresholds = roc_curve(targets, probs, pos_label="HIGH")
     # Evaluating model performance at various thresholds
     df_roc = pd.DataFrame(
