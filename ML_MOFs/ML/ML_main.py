@@ -18,7 +18,7 @@ intervals = {
 
 # regression
 # ML_methods = ["RF", "MLR", "SVM"]
-ML_methods = ["MLR", "SVM"]
+ML_methods = ["SVM"]
 for method in ML_methods:
     if method == "SVM":
         SVM_params = []
@@ -28,7 +28,7 @@ for method in ML_methods:
     for target in regression_targets:
         if method == "SVM":
             predictions, metrics, _, params_df = regression(data, final_descriptors, target, method)
-            params_df["Target"] = [target for _ in params_df.shape[0]]
+            params_df["Target"] = [target for _ in range(params_df.shape[0])]
             SVM_params.append(params_df)
         elif method == "RF":
             predictions, metrics, importance, _ = regression(data, final_descriptors, target, method)

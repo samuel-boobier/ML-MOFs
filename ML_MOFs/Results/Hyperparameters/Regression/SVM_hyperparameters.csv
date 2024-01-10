@@ -1,0 +1,19 @@
+,C,epsilon,gamma,kernel,Target
+0,10,0.1,0.1,rbf,CO2 loading (mol/kg)
+1,10,0.01,0.1,rbf,CO2 loading (mol/kg)
+2,1000,0.0001,0.01,rbf,CO2 loading (mol/kg)
+0,10,0.1,0.1,rbf,CH4 loading (mol/kg)
+1,1000,0.1,0.01,rbf,CH4 loading (mol/kg)
+2,1000,0.001,0.01,rbf,CH4 loading (mol/kg)
+0,1000,0.01,0.01,rbf,SC CO2 loading (mol/kg)
+1,1000,0.1,0.01,rbf,SC CO2 loading (mol/kg)
+2,1000,0.001,0.01,rbf,SC CO2 loading (mol/kg)
+0,10,0.01,0.1,rbf,SC CH4 loading (mol/kg)
+1,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+2,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+0,1000,1.0,0.01,rbf,TSN
+1,10,1.0,scale,rbf,TSN
+2,1000,1.0,0.01,rbf,TSN
+0,100,0.1,0.01,rbf,LOG10 TSN
+1,100,0.1,0.01,rbf,LOG10 TSN
+2,100,0.01,0.01,rbf,LOG10 TSN
