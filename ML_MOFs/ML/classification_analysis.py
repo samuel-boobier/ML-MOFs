@@ -131,51 +131,51 @@ probability_plots("SVM")
 probability_plots("KNN")
 
 # importance plot
-descs = {
-    "PLD log10": "log<sub>10</sub> PLD",
-    "LCD log10": "log<sub>10</sub> LCD",
-    "Density (g/cc)": "Density",
-    "VSA (m2/cc)": "VSA",
-    "VF": "VF",
-    "Qst_CH4": "Qst CH<sub>4</sub>",
-    "Qst_CO2": "Qst CO<sub>2</sub>",
-    "Qst_H2S": "Qst H<sub>2</sub>S",
-    "Qst_H2O": "Qst H<sub>2</sub>O"
-}
+# descs = {
+#     "PLD log10": "log<sub>10</sub> PLD",
+#     "LCD log10": "log<sub>10</sub> LCD",
+#     "Density (g/cc)": "Density",
+#     "VSA (m2/cc)": "VSA",
+#     "VF": "VF",
+#     "Qst_CH4": "Qst CH<sub>4</sub>",
+#     "Qst_CO2": "Qst CO<sub>2</sub>",
+#     "Qst_H2S": "Qst H<sub>2</sub>S",
+#     "Qst_H2O": "Qst H<sub>2</sub>O"
+# }
 
 
-# change here for training results
-data = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_importance.csv")
-data = data.sort_values(by="TSN Class Mean", ascending=False)
-fig = px.bar(data, x='Descriptor', y='TSN Class Mean', error_y='TSN Class SD', color_discrete_sequence=[px.colors.
-             qualitative.D3[0]])
-fig.update_xaxes(
-    tickangle=90,
-    mirror=True,
-    ticks='outside',
-    showline=True,
-    linecolor='black',
-    title_standoff=5,
-)
-fig.update_yaxes(
-    mirror=True,
-    ticks='outside',
-    showline=True,
-    linecolor='black',
-    title_standoff=3,
-)
-fig.update_layout(barmode='group',
-                  xaxis_title=None,
-                  width=200,
-                  height=200,
-                  xaxis=dict(showgrid=False, tickvals=np.arange(0, len(descs)), ticktext=[descs[x] for x in
-                                                                                          data["Descriptor"]]),
-                  yaxis=dict(showgrid=False),
-                  yaxis_title="Importance",
-                  plot_bgcolor='white',
-                  margin=dict(l=10, r=10, t=10, b=0),
-                  )
-fig.data[0].error_y.thickness = 1
-fig.data[0].error_y.width = 2
-filename = "../Graphs/ML_graphs/Classification/RF_importance.png"
-fig.write_image(filename, scale=2)
+# # change here for training results
+# data = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_importance.csv")
+# data = data.sort_values(by="TSN Class Mean", ascending=False)
+# fig = px.bar(data, x='Descriptor', y='TSN Class Mean', error_y='TSN Class SD', color_discrete_sequence=[px.colors.
+#              qualitative.D3[0]])
+# fig.update_xaxes(
+#     tickangle=90,
+#     mirror=True,
+#     ticks='outside',
+#     showline=True,
+#     linecolor='black',
+#     title_standoff=5,
+# )
+# fig.update_yaxes(
+#     mirror=True,
+#     ticks='outside',
+#     showline=True,
+#     linecolor='black',
+#     title_standoff=3,
+# )
+# fig.update_layout(barmode='group',
+#                   xaxis_title=None,
+#                   width=200,
+#                   height=200,
+#                   xaxis=dict(showgrid=False, tickvals=np.arange(0, len(descs)), ticktext=[descs[x] for x in
+#                                                                                           data["Descriptor"]]),
+#                   yaxis=dict(showgrid=False),
+#                   yaxis_title="Importance",
+#                   plot_bgcolor='white',
+#                   margin=dict(l=10, r=10, t=10, b=0),
+#                   )
+# fig.data[0].error_y.thickness = 1
+# fig.data[0].error_y.width = 2
+# filename = "../Graphs/ML_graphs/Classification/RF_importance.png"
+# fig.write_image(filename, scale=2)
