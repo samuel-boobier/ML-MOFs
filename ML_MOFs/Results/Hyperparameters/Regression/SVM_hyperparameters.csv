@@ -1,19 +1,61 @@
 ,C,epsilon,gamma,kernel,Target
-0,10,0.1,0.1,rbf,CO2 loading (mol/kg)
-1,10,0.01,0.1,rbf,CO2 loading (mol/kg)
-2,1000,0.0001,0.01,rbf,CO2 loading (mol/kg)
+0,1000,0.1,0.01,rbf,CO2 loading (mol/kg)
+1,10,0.1,scale,rbf,CO2 loading (mol/kg)
+2,1000,0.1,0.01,rbf,CO2 loading (mol/kg)
+3,10,0.1,0.1,rbf,CO2 loading (mol/kg)
+4,10,0.1,0.1,rbf,CO2 loading (mol/kg)
+5,10,0.1,scale,rbf,CO2 loading (mol/kg)
+6,1000,0.01,0.01,rbf,CO2 loading (mol/kg)
+7,10,0.1,scale,rbf,CO2 loading (mol/kg)
+8,10,0.1,0.1,rbf,CO2 loading (mol/kg)
+9,10,0.1,scale,rbf,CO2 loading (mol/kg)
 0,10,0.1,0.1,rbf,CH4 loading (mol/kg)
-1,1000,0.1,0.01,rbf,CH4 loading (mol/kg)
-2,1000,0.001,0.01,rbf,CH4 loading (mol/kg)
-0,1000,0.01,0.01,rbf,SC CO2 loading (mol/kg)
+1,100,0.1,0.01,rbf,CH4 loading (mol/kg)
+2,10,0.1,0.1,rbf,CH4 loading (mol/kg)
+3,10,0.01,0.1,rbf,CH4 loading (mol/kg)
+4,10,0.1,0.1,rbf,CH4 loading (mol/kg)
+5,10,0.1,scale,rbf,CH4 loading (mol/kg)
+6,10,0.1,0.1,rbf,CH4 loading (mol/kg)
+7,10,0.1,auto,rbf,CH4 loading (mol/kg)
+8,1000,0.1,0.01,rbf,CH4 loading (mol/kg)
+9,1000,0.0001,0.01,rbf,CH4 loading (mol/kg)
+0,1000,1.0,0.01,rbf,SC CO2 loading (mol/kg)
 1,1000,0.1,0.01,rbf,SC CO2 loading (mol/kg)
-2,1000,0.001,0.01,rbf,SC CO2 loading (mol/kg)
-0,10,0.01,0.1,rbf,SC CH4 loading (mol/kg)
+2,1000,1.0,0.01,rbf,SC CO2 loading (mol/kg)
+3,1000,1.0,0.01,rbf,SC CO2 loading (mol/kg)
+4,1000,1.0,0.01,rbf,SC CO2 loading (mol/kg)
+5,1000,0.0001,0.01,rbf,SC CO2 loading (mol/kg)
+6,1000,1.0,0.01,rbf,SC CO2 loading (mol/kg)
+7,1000,0.01,0.01,rbf,SC CO2 loading (mol/kg)
+8,1000,0.001,0.01,rbf,SC CO2 loading (mol/kg)
+9,1000,1.0,0.01,rbf,SC CO2 loading (mol/kg)
+0,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
 1,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
 2,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
-0,1000,1.0,0.01,rbf,TSN
-1,10,1.0,scale,rbf,TSN
-2,1000,1.0,0.01,rbf,TSN
-0,100,0.1,0.01,rbf,LOG10 TSN
-1,100,0.1,0.01,rbf,LOG10 TSN
-2,100,0.01,0.01,rbf,LOG10 TSN
+3,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+4,10,0.01,0.1,rbf,SC CH4 loading (mol/kg)
+5,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+6,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+7,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+8,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+9,10,0.1,0.1,rbf,SC CH4 loading (mol/kg)
+0,10,1.0,0.1,rbf,TSN
+1,1000,0.1,0.01,rbf,TSN
+2,1000,0.1,0.01,rbf,TSN
+3,1000,0.01,0.01,rbf,TSN
+4,10,0.0001,scale,rbf,TSN
+5,1000,0.1,0.01,rbf,TSN
+6,10,1.0,scale,rbf,TSN
+7,1000,1.0,0.01,rbf,TSN
+8,1000,1.0,0.01,rbf,TSN
+9,1000,1.0,0.01,rbf,TSN
+0,1000,0.1,0.01,rbf,LOG10 TSN
+1,1000,0.1,0.01,rbf,LOG10 TSN
+2,100,0.1,0.01,rbf,LOG10 TSN
+3,1000,0.1,0.01,rbf,LOG10 TSN
+4,100,0.1,0.01,rbf,LOG10 TSN
+5,100,0.1,0.01,rbf,LOG10 TSN
+6,1000,0.1,0.01,rbf,LOG10 TSN
+7,100,0.1,0.01,rbf,LOG10 TSN
+8,100,0.1,0.01,rbf,LOG10 TSN
+9,1000,0.1,0.01,rbf,LOG10 TSN

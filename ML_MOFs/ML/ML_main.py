@@ -19,8 +19,8 @@ intervals = {
 
 if __name__ == '__main__':
     # regression
-    # ML_methods = ["RF", "MLR", "SVM"]
-    ML_methods = ["SVM"]
+    ML_methods = ["RF", "MLR", "SVM"]
+    # ML_methods = ["SVM"]
     for method in ML_methods:
         if method == "SVM":
             SVM_params = []
@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
 
     # classification
-    # ML_methods = ["RF", "SVM", "KNN"]
-    ML_methods = ["KNN"]
+    ML_methods = ["RF", "SVM", "KNN"]
+    # ML_methods = ["KNN"]
     target = "TSN Class"
     for method in ML_methods:
         classification(data, final_descriptors, target, method)

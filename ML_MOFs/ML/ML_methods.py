@@ -43,7 +43,7 @@ def run_model(model, X, y, target, ML_type, method):
     metric1 = []
     metric2 = []
     # number of folds
-    k = 3
+    k = 10
     # set up cross validation
     kf = KFold(n_splits=k, random_state=None, shuffle=True)
     # prediction list

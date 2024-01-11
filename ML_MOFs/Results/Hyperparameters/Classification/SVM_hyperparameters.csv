@@ -1,0 +1,11 @@
+,C,gamma,kernel,probability
+0,100,0.01,rbf,True
+1,100,0.01,rbf,True
+2,10,0.01,rbf,True
+3,10,0.01,rbf,True
+4,100,0.01,rbf,True
+5,100,0.1,rbf,True
+6,100,0.01,rbf,True
+7,100,0.01,rbf,True
+8,100,0.01,rbf,True
+9,1000,0.1,rbf,True
