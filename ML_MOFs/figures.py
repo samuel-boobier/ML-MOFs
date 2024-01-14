@@ -234,12 +234,14 @@ ranges = {
 
 def prediction_plots(data, target, method, fig_no, ranges, test=None):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=[ranges[method][target][0], ranges[method][target][-1]],
-                  y=[ranges[method][target][0], ranges[method][target][-1]]))
     if test:
-        fig.add_trace(go.Scatter(data, x="Real", y=method, line=dict(color="black")))
+        fig.add_trace(go.Scatter(x=data["Real"], y=data[method], line=dict(color="black")))
     else:
-        fig.add_trace(go.Scatter(x=data[target], y=data[target + " Prediction"], line=dict(color="black")))
+        fig.add_trace(go.Scatter(x=data[target], y=data[target + " Prediction"], mode='markers',
+                                 line=dict(color="black")))
+    fig.add_trace(go.Scatter(x=[ranges[method][target][0] - 1, ranges[method][target][-1] + 1],
+                             y=[ranges[method][target][0] - 1, ranges[method][target][-1] + 1],
+                             line=dict(color='rgba(0, 0, 0, 0.5)')))
     fig.update_layout(
         xaxis=dict(showgrid=False, tickvals=ranges[method][target]),
         yaxis=dict(showgrid=False, tickvals=ranges[method][target]),
