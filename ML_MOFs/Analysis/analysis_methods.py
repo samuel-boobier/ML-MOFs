@@ -33,10 +33,10 @@ def range_subplot(df, file_name):
                             subplot_titles=title_names, horizontal_spacing=0.06, vertical_spacing=0.12)
     for desc in range(len(descriptor_names)):
         if (desc + 1) % 2 == 1:
-            fig.add_trace(go.Histogram(x=df[descriptor_names[desc]], marker=dict(color="#1f77b4")),
+            fig.add_trace(go.Histogram(x=df[descriptor_names[desc]], marker=dict(color="black")),
                           row=math.ceil((desc + 1) / 2), col=1)
         if (desc + 1) % 2 == 0:
-            fig.add_trace(go.Histogram(x=df[descriptor_names[desc]], marker=dict(color="#1f77b4")),
+            fig.add_trace(go.Histogram(x=df[descriptor_names[desc]], marker=dict(color="black")),
                           row=math.ceil((desc + 1) / 2), col=2)
     if len(descriptor_names) > 2:
         w = 600
@@ -47,6 +47,23 @@ def range_subplot(df, file_name):
     else:
         w = 300
         h = 300
+    fig.update_layout(
+        plot_bgcolor='white'
+    )
+    fig.update_xaxes(
+        mirror=True,
+        ticks='outside',
+        showline=True,
+        linecolor='black',
+        gridcolor='lightgrey'
+    )
+    fig.update_yaxes(
+        mirror=True,
+        ticks='outside',
+        showline=True,
+        linecolor='black',
+        gridcolor='lightgrey'
+    )
     fig.update_layout(width=w, height=h, showlegend=False, margin=dict(l=10, r=10, t=20, b=10))
     fig.update_traces(hovertemplate="Range: %{x}<br>Frequency: %{y}<extra></extra>")
     fig.update_annotations(font_size=11)

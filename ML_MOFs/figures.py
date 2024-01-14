@@ -3,6 +3,7 @@ import plotly.express as px
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
+import plotly.graph_objs as go
 
 
 # Figures for the publication
@@ -23,7 +24,7 @@ target_ranges = {
 
 target_freq = {
     "CO2 loading (mol/kg)": np.arange(0, 10, 2),
-    "CH4 loading (mol/kg)": np.arange(0, 15, 5),
+    "CH4 loading (mol/kg)": np.arange(0, 16, 4),
     "SC CO2 loading (mol/kg)": np.arange(0, 8, 2),
     "SC CH4 loading (mol/kg)": np.arange(0, 6, 1),
     "TSN": np.arange(0, 10, 2),
@@ -64,7 +65,8 @@ def target_histograms(data, desc):
         showline=True,
         linecolor='black',
         title_standoff=5,
-        range=[target_freq[desc][0], target_freq[desc][-1]]
+        range=[target_freq[desc][0], target_freq[desc][-1]],
+        tickvals=target_freq[desc]
     )
     if desc == "TSN":
         fig.add_vline(x=5, line_color="red", line_width=1.5)
@@ -199,14 +201,45 @@ filename = "Graphs/Figures/Figure 2/SC_CO2_VF.png"
 fig.write_image(filename, scale=2)
 # c) - h) RF model 10-CV for regression targets
 
+ranges = {
+    "MLR":
+         {
+            "CO2 loading (mol/kg)": np.arange(-5, 25, 5),
+            "CH4 loading (mol/kg)": np.arange(-2, 5, 1),
+            "SC CO2 loading (mol/kg)": np.arange(-10, 40, 10),
+            "SC CH4 loading (mol/kg)": np.arange(-4, 16, 4),
+            "TSN": np.arange(-10, 50, 10),
+            "LOG10 TSN": np.arange(-2, 3, 1)
+         },
+    "SVM":
+        {
+            "CO2 loading (mol/kg)": np.arange(-5, 25, 5),
+            "CH4 loading (mol/kg)": np.arange(-1, 5, 1),
+            "SC CO2 loading (mol/kg)": np.arange(-5, 30, 5),
+            "SC CH4 loading (mol/kg)": np.arange(-4, 16, 4),
+            "TSN": np.arange(-10, 50, 10),
+            "LOG10 TSN": np.arange(-2, 3, 1)
+        },
+    "RF":
+        {
+            "CO2 loading (mol/kg)": np.arange(0, 25, 5),
+            "CH4 loading (mol/kg)": np.arange(-1, 5, 1),
+            "SC CO2 loading (mol/kg)": np.arange(0, 30, 5),
+            "SC CH4 loading (mol/kg)": np.arange(0, 16, 4),
+            "TSN": np.arange(0, 50, 10),
+            "LOG10 TSN": np.arange(-2, 3, 1)
+        }
+}
 
-def prediction_plots(data, target, method, fig_no, test=None):
+
+def prediction_plots(data, target, method, fig_no, ranges, test=None):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=[ranges[method][target][0], ranges[method][target][-1]],
+                  y=[ranges[method][target][0], ranges[method][target][-1]]))
     if test:
-        fig = px.scatter(data, x="Real", y=method, width=200, height=200,
-                         color_discrete_sequence=["black"])
+        fig.add_trace(go.Scatter(data, x="Real", y=method, line=dict(color="black")))
     else:
-        fig = px.scatter(data, x=target, y=target + " Prediction", width=200, height=200,
-                         color_discrete_sequence=["black"])
+        fig.add_trace(go.Scatter(x=data[target], y=data[target + " Prediction"], line=dict(color="black")))
     fig.update_layout(
         xaxis=dict(showgrid=False, tickvals=ranges[method][target]),
         yaxis=dict(showgrid=False, tickvals=ranges[method][target]),
@@ -232,6 +265,7 @@ def prediction_plots(data, target, method, fig_no, test=None):
         range=[ranges[method][target][0], ranges[method][target][-1]]
     )
     fig.update_traces(marker=dict(size=4))
+    fig.update_layout(showlegend=False, width=200, height=200)
     target = target.replace("(", "_")
     target = target.replace(")", "_")
     target = target.replace("/", "_")
@@ -239,40 +273,11 @@ def prediction_plots(data, target, method, fig_no, test=None):
     fig.write_image(filename, scale=2)
 
 
-ranges = {
-    "MLR":
-         {
-            "CO2 loading (mol/kg)": np.arange(-5, 25, 5),
-            "CH4 loading (mol/kg)": np.arange(-2, 5, 1),
-            "SC CO2 loading (mol/kg)": np.arange(-10, 40, 10),
-            "SC CH4 loading (mol/kg)": np.arange(-4, 16, 4),
-            "TSN": np.arange(-10, 50, 10),
-            "LOG10 TSN": np.arange(-2, 3, 1)
-         },
-    "SVM":
-        {
-            "CO2 loading (mol/kg)": np.arange(0, 25, 5),
-            "CH4 loading (mol/kg)": np.arange(-1, 5, 1),
-            "SC CO2 loading (mol/kg)": np.arange(-5, 30, 5),
-            "SC CH4 loading (mol/kg)": np.arange(-4, 16, 4),
-            "TSN": np.arange(-10, 50, 10),
-            "LOG10 TSN": np.arange(-2, 3, 1)
-        },
-    "RF":
-        {
-            "CO2 loading (mol/kg)": np.arange(0, 25, 5),
-            "CH4 loading (mol/kg)": np.arange(0, 5, 1),
-            "SC CO2 loading (mol/kg)": np.arange(0, 30, 5),
-            "SC CH4 loading (mol/kg)": np.arange(0, 16, 4),
-            "TSN": np.arange(0, 50, 10),
-            "LOG10 TSN": np.arange(-2, 3, 1)
-        }
-}
 methods = ["MLR", "SVM", "RF"]
 for method in methods:
     data = pd.read_csv("Results/ML_results/Regression/" + method + "_predictions.csv")
     for target in targets:
-        prediction_plots(data, target, method, 2)
+        prediction_plots(data, target, method, 2, ranges)
 # i) error vs prediction TSN
 data = pd.read_csv("Results/ML_results/Regression/RF_predictions.csv")
 data["TSN Error"] = np.array(data["TSN Prediction"]) - np.array(data["TSN"])
@@ -314,31 +319,31 @@ fig.write_image(filename, scale=2)
 
 # Figure 3 - External test set
 # Regression plots
-ranges = {
+ranges_t = {
     "MLR":
          {
-            "CO2 loading (mol/kg)": np.arange(-5, 25, 5),
-            "CH4 loading (mol/kg)": np.arange(-2, 5, 1),
-            "SC CO2 loading (mol/kg)": np.arange(-10, 40, 10),
-            "SC CH4 loading (mol/kg)": np.arange(-4, 16, 4),
-            "TSN": np.arange(-10, 50, 10),
-            "LOG10 TSN": np.arange(-2, 3, 1)
+            "CO2 loading (mol/kg)": np.arange(0, 25, 5),
+            "CH4 loading (mol/kg)": np.arange(0, 5, 1),
+            "SC CO2 loading (mol/kg)": np.arange(0, 40, 10),
+            "SC CH4 loading (mol/kg)": np.arange(0, 16, 4),
+            "TSN": np.arange(0, 25, 5),
+            "LOG10 TSN": np.arange(-1, 3, 1)
          },
     "SVM":
         {
-            "CO2 loading (mol/kg)": np.arange(0, 30, 5),
+            "CO2 loading (mol/kg)": np.arange(0, 25, 5),
             "CH4 loading (mol/kg)": np.arange(0, 5, 1),
-            "SC CO2 loading (mol/kg)": np.arange(-5, 30, 5),
+            "SC CO2 loading (mol/kg)": np.arange(0, 50, 10),
             "SC CH4 loading (mol/kg)": np.arange(0, 12, 2),
             "TSN": np.arange(0, 25, 5),
-            "LOG10 TSN": np.arange(-0.5, 2, 0.5)
+            "LOG10 TSN": np.arange(-1, 3, 1)
         },
     "RF":
         {
             "CO2 loading (mol/kg)": np.arange(0, 25, 5),
             "CH4 loading (mol/kg)": np.arange(0, 5, 1),
             "SC CO2 loading (mol/kg)": np.arange(0, 30, 5),
-            "SC CH4 loading (mol/kg)": np.arange(0, 14, 2),
+            "SC CH4 loading (mol/kg)": np.arange(0, 12, 2),
             "TSN": np.arange(0, 25, 5),
             "LOG10 TSN": np.arange(-0.5, 2, 0.5)
         }
@@ -350,7 +355,7 @@ data = pd.read_csv("Results/ML_results/Test_set/regression_predictions.csv")
 for method in methods:
     for target in targets:
         data_t = data[data["Target"] == target]
-        prediction_plots(data_t, target, method, 3, "test")
+        prediction_plots(data_t, target, method, 3, ranges_t, "test")
 
 # SC CO2 loading vs VF for test set
 df_data_test = pd.read_csv("Data/MOF_data_test.csv")
