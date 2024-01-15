@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_absolute_error
 import plotly.graph_objs as go
 
 
@@ -233,7 +233,27 @@ ranges = {
 
 
 def prediction_plots(data, target, method, fig_no, ranges, test=None):
-    fig = go.Figure()
+    if test:
+        r2 = round(r2_score(data["Real"], data[method]), 3)
+        mae = round(mean_absolute_error(data["Real"], data[method]), 3)
+    else:
+        r2 = round(r2_score(data[target], data[target + " Prediction"]), 3)
+        mae = round(mean_absolute_error(data[target], data[target + " Prediction"]), 3)
+    fig = go.Figure(layout=go.Layout(
+        annotations=[
+            go.layout.Annotation(
+                text='R<sup>2</sup>=' + str(r2) + '<br>MAE=' + str(mae),
+                align='left',
+                showarrow=False,
+                xref='paper',
+                yref='paper',
+                x=0.05,
+                y=0.95,
+                borderwidth=0,
+                bgcolor='rgba(255, 255, 255, 0.5)'
+            )
+        ]
+    ))
     if test:
         fig.add_trace(go.Scatter(x=data["Real"], y=data[method], line=dict(color="black")))
     else:
@@ -268,6 +288,7 @@ def prediction_plots(data, target, method, fig_no, ranges, test=None):
     )
     fig.update_traces(marker=dict(size=4))
     fig.update_layout(showlegend=False, width=200, height=200)
+    fig.update_annotations(font_size=8)
     target = target.replace("(", "_")
     target = target.replace(")", "_")
     target = target.replace("/", "_")
