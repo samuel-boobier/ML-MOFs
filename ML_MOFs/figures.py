@@ -255,7 +255,7 @@ def prediction_plots(data, target, method, fig_no, ranges, test=None):
         ]
     ))
     if test:
-        fig.add_trace(go.Scatter(x=data["Real"], y=data[method], line=dict(color="black")))
+        fig.add_trace(go.Scatter(x=data["Real"], y=data[method], mode="markers", line=dict(color="black")))
     else:
         fig.add_trace(go.Scatter(x=data[target], y=data[target + " Prediction"], mode='markers',
                                  line=dict(color="black")))
