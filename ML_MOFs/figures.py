@@ -234,11 +234,18 @@ ranges = {
 
 def prediction_plots(data, target, method, fig_no, ranges, test=None):
     if test:
-        r2 = round(r2_score(data["Real"], data[method]), 3)
-        mae = round(mean_absolute_error(data["Real"], data[method]), 3)
+        r2 = "{:.3f}".format(r2_score(data["Real"], data[method]))
+        mae = "{:.3f}".format(mean_absolute_error(data["Real"], data[method]))
     else:
-        r2 = round(r2_score(data[target], data[target + " Prediction"]), 3)
-        mae = round(mean_absolute_error(data[target], data[target + " Prediction"]), 3)
+        # get R2 and std from file
+        metrics = pd.read_csv("Results//ML_results//Regression//" + method + "_metrics.csv")
+        mets = metrics[metrics["Target"] == target]
+        r2_raw = "{:.3f}".format(mets["Mean R2"].tolist()[0])
+        r2_std = "{:.3f}".format(mets["SD R2"].tolist()[0])
+        mae_raw = "{:.3f}".format(mets["Mean MAE"].tolist()[0])
+        mae_std = "{:.3f}".format(mets["SD MAE"].tolist()[0])
+        r2 = str(r2_raw) + "&plusmn;" + str(r2_std)
+        mae = str(mae_raw) + "&plusmn;" + str(mae_std)
     fig = go.Figure(layout=go.Layout(
         annotations=[
             go.layout.Annotation(
