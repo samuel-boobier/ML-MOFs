@@ -244,8 +244,8 @@ def prediction_plots(data, target, method, fig_no, ranges, test=None):
         r2_std = "{:.3f}".format(mets["SD R2"].tolist()[0])
         mae_raw = "{:.3f}".format(mets["Mean MAE"].tolist()[0])
         mae_std = "{:.3f}".format(mets["SD MAE"].tolist()[0])
-        r2 = str(r2_raw) + "&plusmn;" + str(r2_std)
-        mae = str(mae_raw) + "&plusmn;" + str(mae_std)
+        r2 = str(r2_raw) + " (" + str(r2_std) + ")"
+        mae = str(mae_raw) + " (" + str(mae_std) + ")"
     fig = go.Figure(layout=go.Layout(
         annotations=[
             go.layout.Annotation(
@@ -295,7 +295,7 @@ def prediction_plots(data, target, method, fig_no, ranges, test=None):
     )
     fig.update_traces(marker=dict(size=4))
     fig.update_layout(showlegend=False, width=200, height=200)
-    fig.update_annotations(font_size=8)
+    fig.update_annotations(font_size=10)
     target = target.replace("(", "_")
     target = target.replace(")", "_")
     target = target.replace("/", "_")
