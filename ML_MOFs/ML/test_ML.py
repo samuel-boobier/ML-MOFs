@@ -37,7 +37,7 @@ def test_model_regression(train, test, descriptors, target, C=None, epsilon=None
     # get predictions
     preds = model.predict(X_test)
     # compute metrics
-    metrics.append([target, "MLR", mean_absolute_error(y_test, preds), r2_score(preds, y_test)])
+    metrics.append([target, "MLR", mean_absolute_error(y_test, preds), r2_score(y_test, preds)])
     predictions.append(preds)
     # SVM
     # set up and train model
@@ -46,7 +46,7 @@ def test_model_regression(train, test, descriptors, target, C=None, epsilon=None
     # get predictions
     preds = model.predict(X_test)
     # compute metrics
-    metrics.append([target, "SVM", mean_absolute_error(y_test, preds), r2_score(preds, y_test)])
+    metrics.append([target, "SVM", mean_absolute_error(y_test, preds), r2_score(y_test, preds)])
     predictions.append(preds)
     # RF
     # set up and train model
@@ -55,7 +55,7 @@ def test_model_regression(train, test, descriptors, target, C=None, epsilon=None
     # get predictions
     preds = model.predict(X_test)
     # compute metrics
-    metrics.append([target, "RF", mean_absolute_error(y_test, preds), r2_score(preds, y_test)])
+    metrics.append([target, "RF", mean_absolute_error(y_test, preds), r2_score(y_test, preds)])
     predictions.append(preds)
     return metrics, predictions
 
@@ -107,20 +107,20 @@ regression_metrics.to_csv("../Results/ML_results/Test_set/regression_metrics.csv
 target_predictions.to_csv("../Results/ML_results/Test_set/regression_predictions.csv")
 
 # classification
-ML_methods = ["RF", "SVM", "KNN"]
-target = "TSN Class"
-for method in ML_methods:
-    predictions, probs = test_model_classification(train_data, test_data, final_descriptors, target, method)
-    predictions = pd.DataFrame(data=np.array([test_data["MOF"], test_data[target], predictions, probs]).T,
-                               columns=["MOF", target, target + " Prediction", "HIGH Probability"])
-    predictions.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_classification_predictions.csv")
-    fpr, tpr, thresholds = roc_curve(test_data["TSN Class"], probs, pos_label="HIGH")
-    # Evaluating model performance at various thresholds
-    df_roc = pd.DataFrame(
-        {
-            'False Positive Rate': fpr,
-            'True Positive Rate': tpr
-        }, index=thresholds)
-    df_roc.index.name = "Thresholds"
-    df_roc.columns.name = "Rate"
-    df_roc.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_roc.csv")
+# ML_methods = ["RF", "SVM", "KNN"]
+# target = "TSN Class"
+# for method in ML_methods:
+#     predictions, probs = test_model_classification(train_data, test_data, final_descriptors, target, method)
+#     predictions = pd.DataFrame(data=np.array([test_data["MOF"], test_data[target], predictions, probs]).T,
+#                                columns=["MOF", target, target + " Prediction", "HIGH Probability"])
+#     predictions.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_classification_predictions.csv")
+#     fpr, tpr, thresholds = roc_curve(test_data["TSN Class"], probs, pos_label="HIGH")
+#     # Evaluating model performance at various thresholds
+#     df_roc = pd.DataFrame(
+#         {
+#             'False Positive Rate': fpr,
+#             'True Positive Rate': tpr
+#         }, index=thresholds)
+#     df_roc.index.name = "Thresholds"
+#     df_roc.columns.name = "Rate"
+#     df_roc.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_roc.csv")

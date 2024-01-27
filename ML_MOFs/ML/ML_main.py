@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
 
     # classification
-    ML_methods = ["RF", "SVM", "KNN"]
-    # ML_methods = ["KNN"]
-    target = "TSN Class"
-    for method in ML_methods:
-        classification(data, final_descriptors, target, method)
+    # ML_methods = ["RF", "SVM", "KNN"]
+    # # ML_methods = ["KNN"]
+    # target = "TSN Class"
+    # for method in ML_methods:
+    #     classification(data, final_descriptors, target, method)

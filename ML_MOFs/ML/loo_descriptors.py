@@ -9,18 +9,18 @@ import plotly.express as px
 data = pd.read_csv("..\\Data\\MOF_data.csv")
 
 # regression
-# ML_metrics = []
-# for target in regression_targets:
-#     for desc in final_descriptors:
-#         descriptors = [n for n in final_descriptors if n != desc]
-#         print(target)
-#         print(descriptors)
-#         predictions, metrics, importance, _ = regression(data, descriptors, target, "RF")
-#         metrics.insert(2, desc)
-#         ML_metrics.append(metrics)
-# ML_metrics = pd.DataFrame(data=ML_metrics, columns=["Target", "Method", "Descriptor Removed", "Mean R2", "SD R2",
-#                                                     "Mean MAE", "SD MAE", "Target SD"])
-# ML_metrics.to_csv("..\\Results\\ML_results\\regression\\loo_RF_metrics.csv")
+ML_metrics = []
+for target in regression_targets:
+    for desc in final_descriptors:
+        descriptors = [n for n in final_descriptors if n != desc]
+        print(target)
+        print(descriptors)
+        predictions, metrics, importance, _ = regression(data, descriptors, target, "RF")
+        metrics.insert(2, desc)
+        ML_metrics.append(metrics)
+ML_metrics = pd.DataFrame(data=ML_metrics, columns=["Target", "Method", "Descriptor Removed", "Mean R2", "SD R2",
+                                                    "Mean MAE", "SD MAE", "Target SD"])
+ML_metrics.to_csv("..\\Results\\ML_results\\regression\\loo_RF_metrics.csv")
 
 # plot results
 axis_titles = {
