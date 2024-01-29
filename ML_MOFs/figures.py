@@ -418,3 +418,44 @@ fig.update_yaxes(
 fig.update_traces(marker=dict(size=4))
 filename = "Graphs/Figures/Figure 3/SC_CO2_VF.png"
 fig.write_image(filename, scale=2)
+
+
+def error_scatter(target, method, data):
+    data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
+    fig = px.scatter(data, x=target, y=target + " Error", width=300, height=300, color_discrete_sequence=["black"])
+    fig.update_layout(
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+        yaxis_title="Error",
+        xaxis_title=axis_titles[target],
+        plot_bgcolor='white',
+        margin=dict(l=20, r=20, t=20, b=20)
+    )
+    fig.update_xaxes(
+        mirror=True,
+        ticks='outside',
+        showline=True,
+        linecolor='black',
+        title_standoff=5,
+        #range=[0, 40]
+    )
+    fig.update_yaxes(
+        mirror=True,
+        ticks='outside',
+        showline=True,
+        linecolor='black',
+        title_standoff=3,
+        #range=[-20, 20]
+    )
+    fig.update_traces(marker=dict(size=4))
+    target = target.replace("(", "_")
+    target = target.replace(")", "_")
+    target = target.replace("/", "_")
+    filename = "Graphs/Figures/Scatter Error/" + method + "_" + target + "_error_scatter.png"
+    fig.write_image(filename, scale=2)
+
+
+for m in methods:
+    data = pd.read_csv("Results/ML_results/Regression/" + m + "_predictions.csv")
+    for t in targets:
+        error_scatter(t, m, data)
