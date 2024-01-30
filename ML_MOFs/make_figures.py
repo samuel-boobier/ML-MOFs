@@ -215,24 +215,165 @@ import numpy as np
 # cv2.imwrite('Graphs/Figures/Scatter Error/svm_full_errors.png', figure)
 
 # roc curves in full
-image1 = cv2.imread('Graphs/ML_graphs/Classification/KNN_roc_curve.png')
-image2 = cv2.imread('Graphs/ML_graphs/Classification/RF_roc_curve.png')
-image3 = cv2.imread('Graphs/ML_graphs/Classification/SVM_roc_curve.png')
+# image1 = cv2.imread('Graphs/ML_graphs/Classification/KNN_roc_curve.png')
+# image2 = cv2.imread('Graphs/ML_graphs/Classification/RF_roc_curve.png')
+# image3 = cv2.imread('Graphs/ML_graphs/Classification/SVM_roc_curve.png')
+#
+# figure = np.hstack((image1, image2, image3))
+#
+# cv2.imwrite('Graphs/Figures/Additional Figures/roc.png', figure)
+#
+# # classification in full
+# image1 = cv2.imread('Graphs/ML_graphs/Classification/KNN_histogram.png')
+# image2 = cv2.imread('Graphs/ML_graphs/Classification/RF_histogram.png')
+# image3 = cv2.imread('Graphs/ML_graphs/Classification/SVM_histogram.png')
+# image4 = cv2.imread('Graphs/ML_graphs/Classification/KNN_probs_histogram.png')
+# image5 = cv2.imread('Graphs/ML_graphs/Classification/RF_probs_histogram.png')
+# image6 = cv2.imread('Graphs/ML_graphs/Classification/SVM_probs_histogram.png')
+#
+#
+# figure = np.vstack((image1, image2, image3, image4, image5, image6))
+#
+# cv2.imwrite('Graphs/Figures/Additional Figures/classification_hist.png', figure)
+
+
+# import os
+#
+# path = "Graphs/Figures/Figure 3"
+# for file in os.listdir(path):
+#     print(file)
+#
+# mlr = ["MLR_CH4 loading _mol_kg_.png",
+#        "MLR_CO2 loading _mol_kg_.png",
+#        "MLR_LOG10 TSN.png",
+#        "MLR_SC CH4 loading _mol_kg_.png",
+#        "MLR_SC CO2 loading _mol_kg_.png",
+#        "MLR_TSN.png"]
+#
+# ims = [cv2.imread(path + "/" + x) for x in mlr]
+#
+# top = np.hstack((ims[0], ims[1]))
+# middle = np.hstack((ims[2], ims[3]))
+# bottom = np.hstack((ims[4], ims[5]))
+#
+# figure = np.vstack((top, middle, bottom))
+#
+# cv2.imwrite('Graphs/Figures/Figure 3/test_mlr_full.png', figure)
+#
+#
+# rf = ["RF_CH4 loading _mol_kg_.png",
+#        "RF_CO2 loading _mol_kg_.png",
+#        "RF_LOG10 TSN.png",
+#        "RF_SC CH4 loading _mol_kg_.png",
+#        "RF_SC CO2 loading _mol_kg_.png",
+#        "RF_TSN.png"]
+#
+# ims = [cv2.imread(path + "/" + x) for x in rf]
+#
+# top = np.hstack((ims[0], ims[1]))
+# middle = np.hstack((ims[2], ims[3]))
+# bottom = np.hstack((ims[4], ims[5]))
+#
+# figure = np.vstack((top, middle, bottom))
+#
+# cv2.imwrite('Graphs/Figures/Figure 3/test_rf_full.png', figure)
+#
+#
+# svm = ["SVM_CH4 loading _mol_kg_.png",
+#        "SVM_CO2 loading _mol_kg_.png",
+#        "SVM_LOG10 TSN.png",
+#        "SVM_SC CH4 loading _mol_kg_.png",
+#        "SVM_SC CO2 loading _mol_kg_.png",
+#        "SVM_TSN.png"]
+#
+# ims = [cv2.imread(path + "/" + x) for x in svm]
+#
+# top = np.hstack((ims[0], ims[1]))
+# middle = np.hstack((ims[2], ims[3]))
+# bottom = np.hstack((ims[4], ims[5]))
+#
+# figure = np.vstack((top, middle, bottom))
+#
+# cv2.imwrite('Graphs/Figures/Figure 3/test_svm_full.png', figure)
+#
+# # full error plots
+#
+# import os
+#
+# path = "Graphs/Figures/Scatter Error Test"
+# for file in os.listdir(path):
+#     print(file)
+#
+# mlr = ["MLR_CH4 loading _mol_kg__error_scatter.png",
+#        "MLR_CO2 loading _mol_kg__error_scatter.png",
+#        "MLR_LOG10 TSN_error_scatter.png",
+#        "MLR_SC CH4 loading _mol_kg__error_scatter.png",
+#        "MLR_SC CO2 loading _mol_kg__error_scatter.png",
+#        "MLR_TSN_error_scatter.png"]
+#
+# ims = [cv2.imread(path + "/" + x) for x in mlr]
+#
+# top = np.hstack((ims[0], ims[1]))
+# middle = np.hstack((ims[2], ims[3]))
+# bottom = np.hstack((ims[4], ims[5]))
+#
+# figure = np.vstack((top, middle, bottom))
+#
+# cv2.imwrite('Graphs/Figures/Scatter Error Test/test_mlr_full_errors.png', figure)
+#
+#
+# rf = ["RF_CH4 loading _mol_kg__error_scatter.png",
+#        "RF_CO2 loading _mol_kg__error_scatter.png",
+#        "RF_LOG10 TSN_error_scatter.png",
+#        "RF_SC CH4 loading _mol_kg__error_scatter.png",
+#        "RF_SC CO2 loading _mol_kg__error_scatter.png",
+#        "RF_TSN_error_scatter.png"]
+#
+# ims = [cv2.imread(path + "/" + x) for x in rf]
+#
+# top = np.hstack((ims[0], ims[1]))
+# middle = np.hstack((ims[2], ims[3]))
+# bottom = np.hstack((ims[4], ims[5]))
+#
+# figure = np.vstack((top, middle, bottom))
+#
+# cv2.imwrite('Graphs/Figures/Scatter Error Test/test_rf_full_errors.png', figure)
+#
+#
+# svm = ["SVM_CH4 loading _mol_kg__error_scatter.png",
+#        "SVM_CO2 loading _mol_kg__error_scatter.png",
+#        "SVM_LOG10 TSN_error_scatter.png",
+#        "SVM_SC CH4 loading _mol_kg__error_scatter.png",
+#        "SVM_SC CO2 loading _mol_kg__error_scatter.png",
+#        "SVM_TSN_error_scatter.png"]
+#
+# ims = [cv2.imread(path + "/" + x) for x in svm]
+#
+# top = np.hstack((ims[0], ims[1]))
+# middle = np.hstack((ims[2], ims[3]))
+# bottom = np.hstack((ims[4], ims[5]))
+#
+# figure = np.vstack((top, middle, bottom))
+#
+# cv2.imwrite('Graphs/Figures/Scatter Error Test/test_svm_full_errors.png', figure)
+
+# roc curves in full
+image1 = cv2.imread('Results/ML_results/Test_set/KNN_roc_curve.png')
+image2 = cv2.imread('Results/ML_results/Test_set/RF_roc_curve.png')
+image3 = cv2.imread('Results/ML_results/Test_set/SVM_roc_curve.png')
 
 figure = np.hstack((image1, image2, image3))
 
-cv2.imwrite('Graphs/Figures/Additional Figures/roc.png', figure)
+cv2.imwrite('Graphs/Figures/Additional Figures/test_roc.png', figure)
 
 # classification in full
-image1 = cv2.imread('Graphs/ML_graphs/Classification/KNN_histogram.png')
-image2 = cv2.imread('Graphs/ML_graphs/Classification/RF_histogram.png')
-image3 = cv2.imread('Graphs/ML_graphs/Classification/SVM_histogram.png')
-image4 = cv2.imread('Graphs/ML_graphs/Classification/KNN_probs_histogram.png')
-image5 = cv2.imread('Graphs/ML_graphs/Classification/RF_probs_histogram.png')
-image6 = cv2.imread('Graphs/ML_graphs/Classification/SVM_probs_histogram.png')
-
+image1 = cv2.imread('Results/ML_results/Test_set/KNN_histogram.png')
+image2 = cv2.imread('Results/ML_results/Test_set/RF_histogram.png')
+image3 = cv2.imread('Results/ML_results/Test_set/SVM_histogram.png')
+image4 = cv2.imread('Results/ML_results/Test_set/KNN_probs_histogram.png')
+image5 = cv2.imread('Results/ML_results/Test_set/RF_probs_histogram.png')
+image6 = cv2.imread('Results/ML_results/Test_set/SVM_probs_histogram.png')
 
 figure = np.vstack((image1, image2, image3, image4, image5, image6))
 
-cv2.imwrite('Graphs/Figures/Additional Figures/classification_hist.png', figure)
-
+cv2.imwrite('Graphs/Figures/Additional Figures/test_classification_hist.png', figure)

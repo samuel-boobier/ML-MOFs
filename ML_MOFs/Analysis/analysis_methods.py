@@ -67,7 +67,7 @@ def range_subplot(df, file_name):
     fig.update_layout(width=w, height=h, showlegend=False, margin=dict(l=10, r=10, t=20, b=10))
     fig.update_traces(hovertemplate="Range: %{x}<br>Frequency: %{y}<extra></extra>")
     fig.update_annotations(font_size=11)
-    filename = "../Graphs/Analysis_graphs/" + file_name + ".png"
+    filename = "../Graphs/Analysis_graphs/test" + file_name + ".png"
     fig.write_image(filename, scale=2)
 
 
@@ -107,7 +107,7 @@ def corr_graph(Data, title, file_name):
     df_corr = pd.DataFrame(out_arr, columns=['row_name', 'col_name', 'R2'])
     df_corr = df_corr.sort_values(by='R2', ascending=False)
     plt.tight_layout()
-    filename = "../Graphs/Analysis_graphs/" + file_name + ".png"
+    filename = "../Graphs/Analysis_graphs/test" + file_name + ".png"
     plt.savefig(filename, dpi=600)
     return df_corr
 
@@ -123,4 +123,4 @@ def plot(n1, n2, data, name):
     plt.xlabel(n1)
     plt.ylabel(n2)
     plt.tight_layout()
-    plt.savefig("../Graphs/Analysis_graphs/" + name + ".png", dpi=600)
+    plt.savefig("../Graphs/Analysis_graphs/test" + name + ".png", dpi=600)

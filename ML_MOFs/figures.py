@@ -420,9 +420,13 @@ filename = "Graphs/Figures/Figure 3/SC_CO2_VF.png"
 fig.write_image(filename, scale=2)
 
 
-def error_scatter(target, method, data):
-    data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
-    fig = px.scatter(data, x=target, y=target + " Error", width=300, height=300, color_discrete_sequence=["black"])
+def error_scatter(target, method, data, test=False):
+    if test:
+        data[target + " Error"] = np.array(data[method]) - np.array(data["Real"])
+        fig = px.scatter(data, x="Real", y=target + " Error", width=300, height=300, color_discrete_sequence=["black"])
+    else:
+        data[target + " Error"] = np.array(data[target + " Prediction"]) - np.array(data[target])
+        fig = px.scatter(data, x=target, y=target + " Error", width=300, height=300, color_discrete_sequence=["black"])
     fig.update_layout(
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False),
@@ -451,11 +455,20 @@ def error_scatter(target, method, data):
     target = target.replace("(", "_")
     target = target.replace(")", "_")
     target = target.replace("/", "_")
-    filename = "Graphs/Figures/Scatter Error/" + method + "_" + target + "_error_scatter.png"
+    if test:
+        filename = "Graphs/Figures/Scatter Error Test/" + method + "_" + target + "_error_scatter.png"
+    else:
+        filename = "Graphs/Figures/Scatter Error/" + method + "_" + target + "_error_scatter.png"
     fig.write_image(filename, scale=2)
 
 
+# for m in methods:
+#     data = pd.read_csv("Results/ML_results/Regression/" + m + "_predictions.csv")
+#     for t in targets:
+#         error_scatter(t, m, data)
+
 for m in methods:
-    data = pd.read_csv("Results/ML_results/Regression/" + m + "_predictions.csv")
+    data = pd.read_csv("Results/ML_results/Test_set/regression_predictions.csv")
     for t in targets:
-        error_scatter(t, m, data)
+        data_t = data[data["Target"] == t]
+        error_scatter(t, m, data_t, True)
