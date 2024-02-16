@@ -1,0 +1,52 @@
+SimulationType			MonteCarlo
+NumberofCycles			10000
+NumberofInitializationCycles	10000
+PrintEvery			100
+RestartFile			no
+
+ContinueAfterCrash		no
+WriteBinaryRestartFileEvery	500
+
+Movies				yes
+WriteMoviesEvery		500
+
+Forcefield			UFF
+
+UseChargesFromCIFFile		yes
+CutOffVDW			12.8
+
+ChargeMethod			Ewald
+EwaldPrecision			1e-6
+InternalFrameworkLennarJonesInteractions	no
+
+Framework			0
+FrameworkName			MOF_NAME	
+FlexibleFramework		no
+HeliumVoidFraction		0.7668
+UnitCells			3 3 3  
+ExternalTemperature		298
+ExternalPressure		1000000
+
+Component 0 MoleculeName		CO2
+	    MoleculeDefinition		TraPPE
+	    MolFraction			0.5
+	    TranslationProbability	0.5
+	    RotationProbability		0.5
+	    IdealGasRosenbluthWeight	1.00006
+	    IdentityChangeProbability	1.0
+	      NumberOfIdentityChanges	1
+	      IdentityChangesList	1
+	    SwapProbability		1.0
+	    CreateNumberOfMolecules	0
+
+Component 1 MoleculeName		methane
+	    MoleculeDefinition		TraPPE
+	    MolFraction			0.5
+	    TranslationProbability	0.5
+	    RotationProbability		0.5
+	    IdealGasRosenbluthWeight	1.0
+	    IdentityChangeProbability	1.0
+	      NumberOfIdentityChanges	1
+	      IdentityChangesList	0	
+	    SwapProbability		1.0
+	    CreateNumberOfMolecules	0

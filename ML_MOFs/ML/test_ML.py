@@ -1,14 +1,21 @@
 import numpy as np
-from sklearn import impute
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.metrics import mean_absolute_error, r2_score, classification_report, brier_score_loss, roc_curve
 import pandas as pd
-import plotly.express as px
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVR, SVC
-from ML_main import SVM_parameters, final_descriptors, regression_targets
+from ML_main import final_descriptors, regression_targets
+
+SVM_parameters = {
+    "CO2 loading (mol/kg)": {'C': 10, 'epsilon': 0.1, 'gamma': 'scale'},
+    "CH4 loading (mol/kg)": {'C': 10, 'epsilon': 0.1, 'gamma': 0.1},
+    "SC CO2 loading (mol/kg)": {'C': 1000, 'epsilon': 1, 'gamma': 0.01, 'kernel': 'rbf'},
+    "SC CH4 loading (mol/kg)": {'C': 10, 'epsilon': 0.1, 'gamma': 0.1, 'kernel': 'rbf'},
+    "TSN": {'C': 10, 'epsilon': 0.1, 'gamma': 'scale', 'kernel': 'rbf'},
+    "LOG10 TSN": {'C': 1000, 'epsilon': 0.1, 'gamma': 0.01}
+}
 
 
 def test_model_regression(train, test, descriptors, target, C=None, epsilon=None, gamma=None):
@@ -30,7 +37,7 @@ def test_model_regression(train, test, descriptors, target, C=None, epsilon=None
     # get predictions
     preds = model.predict(X_test)
     # compute metrics
-    metrics.append([target, "MLR", mean_absolute_error(y_test, preds), r2_score(preds, y_test)])
+    metrics.append([target, "MLR", mean_absolute_error(y_test, preds), r2_score(y_test, preds)])
     predictions.append(preds)
     # SVM
     # set up and train model
@@ -39,7 +46,7 @@ def test_model_regression(train, test, descriptors, target, C=None, epsilon=None
     # get predictions
     preds = model.predict(X_test)
     # compute metrics
-    metrics.append([target, "SVM", mean_absolute_error(y_test, preds), r2_score(preds, y_test)])
+    metrics.append([target, "SVM", mean_absolute_error(y_test, preds), r2_score(y_test, preds)])
     predictions.append(preds)
     # RF
     # set up and train model
@@ -48,7 +55,7 @@ def test_model_regression(train, test, descriptors, target, C=None, epsilon=None
     # get predictions
     preds = model.predict(X_test)
     # compute metrics
-    metrics.append([target, "RF", mean_absolute_error(y_test, preds), r2_score(preds, y_test)])
+    metrics.append([target, "RF", mean_absolute_error(y_test, preds), r2_score(y_test, preds)])
     predictions.append(preds)
     return metrics, predictions
 
@@ -66,9 +73,9 @@ def test_model_classification(train, test, descriptors, target, method):
     if method == "RF":
         model = RandomForestClassifier(n_estimators=500)
     elif method == "SVM":
-        model = SVC(C=1, gamma="scale", probability=True)
+        model = SVC(C=100, gamma=0.01, probability=True)
     else:
-        model = KNeighborsClassifier(n_neighbors=5)
+        model = KNeighborsClassifier(n_neighbors=20)
     model.fit(X_train, y_train.values.ravel())
     # get predictions
     predictions = model.predict(X_test)
@@ -89,8 +96,8 @@ regression_metrics = []
 target_predictions = pd.DataFrame()
 for target in regression_targets:
     r_metrics, t_preds = test_model_regression(train_data, test_data, final_descriptors, target,
-                                                 SVM_parameters[target]["C"], SVM_parameters[target]["epsilon"],
-                                                 SVM_parameters[target]["gamma"])
+                                               SVM_parameters[target]["C"], SVM_parameters[target]["epsilon"],
+                                               SVM_parameters[target]["gamma"])
     for met in r_metrics:
         regression_metrics.append(met)
     t_preds = pd.DataFrame(data=np.array(t_preds).T, columns=["MOF", "Target", "Real", "MLR", "SVM", "RF"])
@@ -100,20 +107,20 @@ regression_metrics.to_csv("../Results/ML_results/Test_set/regression_metrics.csv
 target_predictions.to_csv("../Results/ML_results/Test_set/regression_predictions.csv")
 
 # classification
-ML_methods = ["RF", "SVM", "KNN"]
-target = "TSN Class"
-for method in ML_methods:
-    predictions, probs = test_model_classification(train_data, test_data, final_descriptors, target, method)
-    predictions = pd.DataFrame(data=np.array([test_data["MOF"], test_data[target], predictions, probs]).T,
-                               columns=["MOF", target, target + " Prediction", "HIGH Probability"])
-    predictions.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_classification_predictions.csv")
-    fpr, tpr, thresholds = roc_curve(test_data["TSN Class"], probs, pos_label="HIGH")
-    # Evaluating model performance at various thresholds
-    df_roc = pd.DataFrame(
-        {
-            'False Positive Rate': fpr,
-            'True Positive Rate': tpr
-        }, index=thresholds)
-    df_roc.index.name = "Thresholds"
-    df_roc.columns.name = "Rate"
-    df_roc.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_roc.csv")
+# ML_methods = ["RF", "SVM", "KNN"]
+# target = "TSN Class"
+# for method in ML_methods:
+#     predictions, probs = test_model_classification(train_data, test_data, final_descriptors, target, method)
+#     predictions = pd.DataFrame(data=np.array([test_data["MOF"], test_data[target], predictions, probs]).T,
+#                                columns=["MOF", target, target + " Prediction", "HIGH Probability"])
+#     predictions.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_classification_predictions.csv")
+#     fpr, tpr, thresholds = roc_curve(test_data["TSN Class"], probs, pos_label="HIGH")
+#     # Evaluating model performance at various thresholds
+#     df_roc = pd.DataFrame(
+#         {
+#             'False Positive Rate': fpr,
+#             'True Positive Rate': tpr
+#         }, index=thresholds)
+#     df_roc.index.name = "Thresholds"
+#     df_roc.columns.name = "Rate"
+#     df_roc.to_csv("..\\Results\\ML_results\\Test_set\\" + method + "_roc.csv")

@@ -1,0 +1,20 @@
+Scripts associated with the curation protocols followed in this work.
+
+check_phase1.py checks for cifs which contain no metal, no carbon or only 1-2 elements, and takes the directory containing the cifs to be checked as an argument
+
+check_tooclose.py checks for cifs containing atoms within 0.5 Angstrom of each other, and takes the directory containing the cifs to be checked as an argument
+
+D atoms were replaced with H using find and replace tools. The script find_D.sh was used to check for the presence of D atoms. 
+The script check_H.py checks for cifs containing no H atoms, and takes the directory containing the cifs to be checked as an argument.
+
+Oxidation state checking was done using the published MOSAEC code (Chem. Mater. 2023, 35, 9, 900-916)). 
+The script MOSAEC_filterresults.py reads the MOSAEC outputs and lists passed and failed cifs.
+
+Dimensionality was checked using the Zeo++ software package (Micropor. Mesopor. Mater. 2012, 149, 134-141)
+
+deDuplicate.py was used to obtain Weisfeiler-Lehman graph hashes for each cif based on their structure graphs using the modules pymatgen and networkx. Hashes and names were then compared using compare_hashes.py to deduplicate the dataset
+
+For the external test set, geometrical filters were also applied as described in the paper. Geometrical descriptors for this purpose were calculated using the Zeo++ software package (Micropor. Mesopor. Mater. 2012, 149, 134-141).
+For the training set, geometrical filters had already been applied by Glover and Besley (Faraday Discuss. 2021, 231, 235-257)
+
+The structures which passed curation can be found in Passed_structures/.

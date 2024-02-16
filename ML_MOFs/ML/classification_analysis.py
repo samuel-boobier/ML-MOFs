@@ -12,7 +12,7 @@ def get_classification_histogram(method):
     data = pd.read_csv("..\\Data\\MOF_data_test.csv")
     data = data.sort_values(by="MOF")
     prediction_data["TSN"] = data["TSN"].tolist()
-    fig = px.histogram(prediction_data, x="TSN", color="TSN Class Prediction", barmode="overlay", width=600, height=200)
+    fig = px.histogram(prediction_data, x="TSN", color="TSN Class Prediction", barmode="overlay", width=400, height=200)
     fig.add_vline(x=5, line_color="black", line_width=1, line_dash="dash")
     fig.update_layout(yaxis=dict(showgrid=False),
                       yaxis_title="Frequency",
@@ -60,6 +60,18 @@ def roc_plot(method):
         type='line', line=dict(dash='dash', color="black", width=1),
         x0=0, x1=1, y0=0, y1=1
     )
+    fig.add_annotation(
+        text='AUC=' + "{:.3f}".format((auc(fpr, tpr))),
+        align='left',
+        showarrow=False,
+        xref='paper',
+        yref='paper',
+        x=0.95,
+        y=0.05,
+        borderwidth=0,
+        font=dict(color="black"),
+        bgcolor="white"
+    )
     fig.update_layout(
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False),
@@ -98,7 +110,7 @@ def probability_plots(method):
     # change here for training results
     df = pd.read_csv("../Results/ML_results/Test_set/" + method + "_classification_predictions.csv")
     # The histogram of scores compared to true labels
-    fig = px.histogram(df, x="HIGH Probability", color="TSN Class", nbins=50, width=600, height=200,
+    fig = px.histogram(df, x="HIGH Probability", color="TSN Class", nbins=50, width=400, height=200,
                        labels=dict(color='True Labels', x='Score'), barmode="overlay")
     fig.update_layout(yaxis=dict(showgrid=False),
                       yaxis_title="Frequency",
@@ -145,37 +157,37 @@ descs = {
 
 
 # change here for training results
-data = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_importance.csv")
-data = data.sort_values(by="TSN Class Mean", ascending=False)
-fig = px.bar(data, x='Descriptor', y='TSN Class Mean', error_y='TSN Class SD', color_discrete_sequence=[px.colors.
-             qualitative.D3[0]])
-fig.update_xaxes(
-    tickangle=90,
-    mirror=True,
-    ticks='outside',
-    showline=True,
-    linecolor='black',
-    title_standoff=5,
-)
-fig.update_yaxes(
-    mirror=True,
-    ticks='outside',
-    showline=True,
-    linecolor='black',
-    title_standoff=3,
-)
-fig.update_layout(barmode='group',
-                  xaxis_title=None,
-                  width=200,
-                  height=200,
-                  xaxis=dict(showgrid=False, tickvals=np.arange(0, len(descs)), ticktext=[descs[x] for x in
-                                                                                          data["Descriptor"]]),
-                  yaxis=dict(showgrid=False),
-                  yaxis_title="Importance",
-                  plot_bgcolor='white',
-                  margin=dict(l=10, r=10, t=10, b=0),
-                  )
-fig.data[0].error_y.thickness = 1
-fig.data[0].error_y.width = 2
-filename = "../Graphs/ML_graphs/Classification/RF_importance.png"
-fig.write_image(filename, scale=2)
+# data = pd.read_csv("..\\Results\\ML_results\\Classification\\RF_importance.csv")
+# data = data.sort_values(by="TSN Class Mean", ascending=False)
+# fig = px.bar(data, x='Descriptor', y='TSN Class Mean', error_y='TSN Class SD', color_discrete_sequence=[px.colors.
+#              qualitative.D3[0]])
+# fig.update_xaxes(
+#     tickangle=90,
+#     mirror=True,
+#     ticks='outside',
+#     showline=True,
+#     linecolor='black',
+#     title_standoff=5,
+# )
+# fig.update_yaxes(
+#     mirror=True,
+#     ticks='outside',
+#     showline=True,
+#     linecolor='black',
+#     title_standoff=3,
+# )
+# fig.update_layout(barmode='group',
+#                   xaxis_title=None,
+#                   width=200,
+#                   height=200,
+#                   xaxis=dict(showgrid=False, tickvals=np.arange(0, len(descs)), ticktext=[descs[x] for x in
+#                                                                                           data["Descriptor"]]),
+#                   yaxis=dict(showgrid=False),
+#                   yaxis_title="Importance",
+#                   plot_bgcolor='white',
+#                   margin=dict(l=10, r=10, t=10, b=0),
+#                   )
+# fig.data[0].error_y.thickness = 1
+# fig.data[0].error_y.width = 2
+# filename = "../Graphs/ML_graphs/Classification/RF_importance.png"
+# fig.write_image(filename, scale=2)
