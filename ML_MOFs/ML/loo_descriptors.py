@@ -2,7 +2,6 @@
 from ML_methods import regression
 import pandas as pd
 from ML_main import final_descriptors, regression_targets
-import plotly.graph_objs as go
 import plotly.express as px
 
 
